@@ -17,7 +17,7 @@ function TaxiStand(){
         <Marker 
         key= {index}
         coordinate={{latitude: item.Latitude, longitude: item.Longitude}}
-        onPress={()=> selectTaxiStand('hello')}
+        onPress={()=> selectTaxiStand(item.TaxiCode, item.Name, item.Latitude, item.Longitude)}
         centerOffset={{x: -18, y: -60}}
         anchor={{x: 0.69, y: 1}}
         image={taxiStandMarker}/>
@@ -26,10 +26,10 @@ function TaxiStand(){
   )
 }
 
-function selectTaxiStand(name, latitude, longitude){
-  Alert.alert('Address: '+name);
+function selectTaxiStand(taxiCode, name, latitude, longitude){
+  Alert.alert('Taxi Stand: ' + taxiCode,
+  'Address: '+ name);
 }
-
 
 export default function MapScreen() {
 
