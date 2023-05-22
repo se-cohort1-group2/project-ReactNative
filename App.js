@@ -5,6 +5,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+import Map from "./components/Map";
+
 function MapScreen() {
     return (
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -41,7 +43,7 @@ export default function App() {
                     tabBarInactiveTintColor: "gray",
                 })}
             >
-                <Tab.Screen name="Map" component={MapScreen}/>
+                <Tab.Screen name="Map" component={Map}/>
                 <Tab.Screen name="Taxi" component={TaxiScreen}/>
             </Tab.Navigator>
         </NavigationContainer>
