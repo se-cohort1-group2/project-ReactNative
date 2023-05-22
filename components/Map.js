@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
+
 import Device from "expo-device";
 import * as Location from "expo-location";
-import MapView from "react-native-maps";
-import { Marker } from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 
 export default function Map() {
 

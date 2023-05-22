@@ -5,8 +5,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+//import Map from "./components/Map";
 import MapScreen from "./components/MapScreen";
-
 
 function TaxiScreen() {
     return (
