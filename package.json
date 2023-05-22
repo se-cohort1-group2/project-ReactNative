@@ -17,12 +17,7 @@
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
     "react-native": "0.71.8",
-<<<<<<< HEAD
     "react-native-maps": "1.3.2",
-    "expo-location": "~15.1.1"
-=======
-    "react-native-maps": "1.3.2"
->>>>>>> 3b25d1926b4b743de1b3dfb68f3d9d8eb99c5abc
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
