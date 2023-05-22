@@ -5,8 +5,20 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+<<<<<<< HEAD
 import MapScreen from "./components/MapScreen";
 
+=======
+import Map from "./components/Map";
+
+function MapScreen() {
+    return (
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+            <Text>Map Screen</Text>
+        </View>
+    )
+}
+>>>>>>> 3b25d1926b4b743de1b3dfb68f3d9d8eb99c5abc
 
 function TaxiScreen() {
     return (
@@ -36,7 +48,7 @@ export default function App() {
                     tabBarInactiveTintColor: "gray",
                 })}
             >
-                <Tab.Screen name="Map" component={MapScreen}/>
+                <Tab.Screen name="Map" component={Map}/>
                 <Tab.Screen name="Taxi" component={TaxiScreen}/>
             </Tab.Navigator>
         </NavigationContainer>
