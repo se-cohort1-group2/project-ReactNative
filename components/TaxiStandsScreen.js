@@ -49,7 +49,7 @@ export default function TaxiStandsScreen({ navigation }) {
     )
 
     const renderItem = ({item}) => {
-        const backgroundColor = item.TaxiCode === SelectedItem ? "#3d9677" : "#a6deca";
+        const backgroundColor = item.TaxiCode === SelectedItem ? "#3d9677" : "#D5D8DC";
         const color = item.TaxiCode === SelectedItem ? "white" : "black";
         return (
             <Item
@@ -84,32 +84,42 @@ export default function TaxiStandsScreen({ navigation }) {
     }
 
     return (
-        <>
-        <View style={styles.SearchBar}>
-            <Ionicons name="ios-search" size={24} color="#aaa"/>
-            <TextInput
-                style={styles.SearchInput}
-                onChangeText={(text) => SearchAndFilter(text)}
-                value={SearchTaxiStands}
-                placeholder="Search by Code or Location"
-            />
+        <View style={styles.mainContainer}>
+            <View style={styles.SearchBar}>
+                <Ionicons name="ios-search-outline" size={20} color="black" style={styles.SearchIcon}/>
+                <TextInput
+                    style={styles.SearchInput}
+                    onChangeText={(text) => SearchAndFilter(text)}
+                    value={SearchTaxiStands}
+                    placeholder="Search by code or location"
+                />
+            </View>
+            <View style={styles.listContainer}>
+                <FlatList
+                    data={FilteredTaxiStands}
+                    renderItem={renderItem}
+                />
+            </View>
         </View>
-        <FlatList
-            data={FilteredTaxiStands}
-            renderItem={renderItem}
-        />
-        </>
     )
 }
 
 const styles = StyleSheet.create({
+    mainContainer: {
+        backgroundColor: "white",
+        flex: 1,
+    },
+    listContainer: {
+        flexBasis: "50%",
+        flexGrow: 1,
+    },
     itemOuter: {
-        paddingVertical: 18,
+        paddingVertical: 15,
         paddingLeft: 10,
         paddingRight: 40,
-        marginHorizontal: 16,
-        marginBottom: 16,
-        borderRadius: 20,
+        marginHorizontal: 15,
+        marginBottom: 15,
+        borderRadius: 8,
     },
     itemInner: {
         flexDirection: "row",
@@ -127,17 +137,19 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     SearchBar: {
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        margin: 16,
+        margin: 15,
         flexDirection: "row",
-        borderRadius: 20,
+        columnGap: 10,
+        borderRadius: 8,
         borderWidth: 1,
-        borderColor: "#aaa",
-        backgroundColor: "#fff",
+        borderColor: "black",
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+    },
+    SearchIcon: {
+        marginVertical: 3,
     },
     SearchInput: {
         fontSize: 16,
-        marginLeft: 10,
     },
 })
