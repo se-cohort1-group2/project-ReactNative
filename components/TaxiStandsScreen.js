@@ -1,11 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, FlatList, Pressable, TextInput } from "react-native";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import TaxiStandsList from "./TaxiStands.json";
 
-export default function TaxiStands({ navigation }) {
+export default function TaxiStandsScreen({ navigation }) {
 
     const GoToMap = () => {
         navigation.navigate("Map")
