@@ -1,32 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import MapView, {Marker, Polyline} from 'react-native-maps';
 import { StyleSheet, View, Text, Alert } from 'react-native';
+
+import MapView, {Marker, Polyline, Callout} from 'react-native-maps';
+import {getDistance} from 'geolib';
 import * as Location from 'expo-location';
+
 import taxiStandMarker from '../assets/taximarker.png'
 
 const taxiStandData = require('../TaxiStands.json');
 
 
 
-function TaxiStand({setSelectedLocation, setShowPolyLine}){
+function TaxiStand({userLocation, distance, setSelectedLocation, setShowPolyLine, setDistance}){
 
   
   return(
       taxiStandData.value.map((item, index) => {
+        
       return(
         <Marker 
         key= {index}
         coordinate={{latitude: item.Latitude, longitude: item.Longitude}}
-        onPress={()=> selectTaxiStand(item.TaxiCode, item.Name, item.Latitude, item.Longitude, setSelectedLocation, setShowPolyLine)}
+        onPress={()=> selectTaxiStand(userLocation, item.TaxiCode, item.Name, item.Latitude, item.Longitude, setSelectedLocation, setShowPolyLine, setDistance)}
         centerOffset={{x: -18, y: -60}}
         anchor={{x: 0.69, y: 1}}
-        image={taxiStandMarker}/>
+        image={taxiStandMarker}>
+          {distance != null && 
+            <Callout>
+              <View>
+                <Text>{distance}km from me</Text>
+              </View>
+            </Callout>
+          }
+        </Marker>
       )
     })
   )
 }
 
-function selectTaxiStand(taxiCode, name, latitude,longitude, setSelectedLocation, setShowPolyLine){
+function selectTaxiStand(userLocation, taxiCode, name, latitude,longitude, setSelectedLocation, setShowPolyLine, setDistance){
   Alert.alert('Taxi Stand: ' + taxiCode,
   'Address: '+ name, [
     { text: 'Navigate', onPress: () => {
@@ -34,11 +46,12 @@ function selectTaxiStand(taxiCode, name, latitude,longitude, setSelectedLocation
         latitude: latitude,
         longitude: longitude
         });
+        setDistance(getDistance(userLocation,{latitude: latitude,longitude: longitude}));
         setShowPolyLine(true);
     } },
     {
       text: 'Cancel',
-      onPress: () => console.log('No Pressed'),
+      onPress: () => setShowPolyLine(false),
       style: 'cancel',
     },
   ],
@@ -46,12 +59,12 @@ function selectTaxiStand(taxiCode, name, latitude,longitude, setSelectedLocation
 }
 
 
-
 export default function MapScreen() {
 
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [distance, setDistance] = useState(null);
   const [showPolyLine, setShowPolyLine] = useState(false);
 
   useEffect(() => {
@@ -86,14 +99,26 @@ export default function MapScreen() {
         <MapView 
         style={styles.map} 
         showsUserLocation={true} 
-        followsUserLocation={true}
         zoomTapEnabled={true}>
             
-            <TaxiStand setSelectedLocation={setSelectedLocation} setShowPolyLine={setShowPolyLine}/>
+            <TaxiStand 
+              userLocation={userLocation}
+              distance={distance}
+              setSelectedLocation={setSelectedLocation} 
+              setShowPolyLine={setShowPolyLine}
+              setDistance={setDistance}/>
+            {showPolyLine && <Polyline
+              coordinates={[userLocation,selectedLocation]}
+              strokeColor="#717D7E"
+              fillColor="#717D7E"
+              strokeWidth={6}
+              />}
 
         </MapView>
         {/* {showPolyLine && <Text style={{fontSize:6}}>Hello</Text>} */}
-      <Text style={styles.footer}>{text}</Text>
+
+        <Text style={styles.footer}>{text}{distance != null && " Selected location is "+`${distance}`+"km away"}</Text>
+      
     </View>
   );
 }
@@ -104,16 +129,15 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: '92%',
-    marginBottom: '2.5%'
+    height: '85%'
   },
   footer:{
-    alignItems: 'stretch',
     color: '#2E4053',
     backgroundColor: '#D5D8DC',
     textAlign:'center',
-    fontSize: 12,
     padding: 5,
-    height:'10%',
+    fontSize: 12,
+    height: '5%',
+
   }
 });
