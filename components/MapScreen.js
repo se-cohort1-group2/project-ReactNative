@@ -109,7 +109,7 @@ export default function MapScreen() {
         funcGetPlanningAreaStatic(setAreaPolygonList); //Get static planning area
     }, []);
 
-    let text = "Waiting..";
+    let text = "Detecting location...";
     let userLocation = {
         latitude: null,
         longitude: null
