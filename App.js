@@ -5,16 +5,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-//import Map from "./components/Map";
 import MapScreen from "./components/MapScreen";
-
-function TaxiScreen() {
-    return (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-            <Text>Taxi Screen</Text>
-        </View>
-    )
-}
+import TaxiStandsScreen from "./components/TaxiStandsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -27,7 +19,7 @@ export default function App() {
                         let iconName;
                         if (route.name === "Map") {
                             iconName = focused ? "ios-map" : "ios-map-outline";
-                        } else if (route.name === "Taxi") {
+                        } else if (route.name === "Taxi Stands") {
                             iconName = focused ? "ios-car" : "ios-car-outline";
                         }
                         return (<Ionicons name={iconName} size={size} color={color} />)
@@ -37,7 +29,7 @@ export default function App() {
                 })}
             >
                 <Tab.Screen name="Map" component={MapScreen}/>
-                <Tab.Screen name="Taxi" component={TaxiScreen}/>
+                <Tab.Screen name="Taxi Stands" component={TaxiStandsScreen}/>
             </Tab.Navigator>
         </NavigationContainer>
     )
