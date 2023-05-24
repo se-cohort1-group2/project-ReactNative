@@ -78,10 +78,10 @@ export default function MapScreen() {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
-        { label: 'QUEENSTOWN', value: 'QUEENSTOWN' },
-        { label: 'DOWNTOWN CORE', value: 'DOWNTOWN CORE' },
-        { label: 'NEWTON', value: 'NEWTON' },
-        { label: 'ORCHARD', value: 'ORCHARD' },
+        { labelStyle: {padding: 5}, label: "QUEENSTOWN", value: "QUEENSTOWN" },
+        { labelStyle: {padding: 5}, label: "DOWNTOWN CORE", value: "DOWNTOWN CORE" },
+        { labelStyle: {padding: 5}, label: "NEWTON", value: "NEWTON" },
+        { labelStyle: {padding: 5}, label: "ORCHARD", value: "ORCHARD" },
     ]);
 
     //Planning area
@@ -153,80 +153,95 @@ export default function MapScreen() {
     }
 
     return (
-        <View style={styles.container}>
-            <MapView
-                style={styles.map}
-                showsUserLocation={true}
-                zoomTapEnabled={true}
-                initialCamera={camera}
-            >
-                <Polygon
-                    coordinates={polygon}
-                    strokeColor="#F00"
-                    fillColor="rgba(255,0,0,0.1)"
-                    strokeWidth={1}
+        <View style={styles.mainContainer}>
+            <View style={styles.topContainer}>
+                <Text style={styles.footer}>{text}{distance != null && " Selected location is " + `${distance}` + "km away."}</Text>
+            </View>
+            <View style={styles.mapContainer}>
+                <MapView
+                    style={styles.map}
+                    showsUserLocation={true}
+                    zoomTapEnabled={true}
+                    initialCamera={camera}
+                >
+                    <Polygon
+                        coordinates={polygon}
+                        strokeColor="#F00"
+                        fillColor="rgba(255,0,0,0.1)"
+                        strokeWidth={1}
+                    />
+                    <TaxiStand
+                        userLocation={userLocation}
+                        distance={distance}
+                        setSelectedLocation={setSelectedLocation}
+                        setShowPolyLine={setShowPolyLine}
+                        setDistance={setDistance}
+                    />
+                    {showPolyLine && <Polyline
+                        coordinates={[ userLocation, selectedLocation ]}
+                        strokeColor="#717D7E"
+                        fillColor="#717D7E"
+                        strokeWidth={6}
+                    />}
+                </MapView>
+            </View>
+            <View style={styles.bottomContainer}>
+                <DropDownPicker
+                    containerStyle={styles.dropdown}
+                    labelStyle={styles.dropdownlabel}
+                    placeholderStyle={styles.dropdownlabel}
+                    placeholder="Select a region"
+                    dropDownContainerStyle={{marginBottom: 18}}
+                    open={open}
+                    value={value}
+                    items={items}
+                    setOpen={setOpen}
+                    setValue={setValue}
+                    setItems={setItems}
+                    onChangeValue={(value) => {
+                        console.log(value);
+                        handlerSelectArea(value);
+                    }}
                 />
-                <TaxiStand
-                    userLocation={userLocation}
-                    distance={distance}
-                    setSelectedLocation={setSelectedLocation}
-                    setShowPolyLine={setShowPolyLine}
-                    setDistance={setDistance}
-                />
-                {showPolyLine && <Polyline
-                    coordinates={[ userLocation, selectedLocation ]}
-                    strokeColor="#717D7E"
-                    fillColor="#717D7E"
-                    strokeWidth={6}
-                />}
-            </MapView>
-            {/* {showPolyLine && <Text style={{ fontSize: 6 }}>Hello</Text>} */}
-            <Text style={styles.footer}>
-                {text}{distance != null && " Selected location is " + `${distance}` + "km away."}
-            </Text>
-            <DropDownPicker
-                containerStyle={styles.dropdown}
-                labelStyle={styles.dropdownlabel}
-                open={open}
-                value={value}
-                items={items}
-                setOpen={setOpen}
-                setValue={setValue}
-                setItems={setItems}
-                onChangeValue={(value) => {
-                    console.log(value);
-                    handlerSelectArea(value);
-                }}
-            />
-            <Text style={styles.footer}>Taxis available in area: {taxisAvailable}</Text>
+                <Text style={styles.footer}>Taxis available in this region: {taxisAvailable}</Text>
+            </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: "#fff",
+    mainContainer: {
+        backgroundColor: "white",
+        flex: 1,
+        justifyContent: "space-between",
     },
     map: {
         width: "100%",
-        height: "75%",
+        height: "100%",
+    },
+    topContainer: {
+        //height: 25,
+    },
+    mapContainer: {
+        flexBasis: "50%",
+        flexGrow: 1,
+    },
+    bottomContainer: {
+        //height: 105,
     },
     footer: {
-        color: "#2E4053",
         backgroundColor: "#D5D8DC",
+        color: "#2E4053",
         textAlign: "center",
         fontSize: 12,
         padding: 5,
-        margin: 10,
     },
     dropdown: {
-        width: "95%",
         alignItems: "center",
-        marginHorizontal: "2.5%",
-        marginTop: "2.5%",
+        padding: 15,
     },
     dropdownlabel: {
-        width: "95%",
-        alignItems: "center",
+        padding: 5,
+        //fontSize: 16,
     }
 })
