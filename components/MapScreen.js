@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Alert } from "react-native";
 import * as Location from "expo-location";
 import MapView, { Marker, Polygon, Polyline, Callout } from "react-native-maps";
 import { getDistance, getCenterOfBounds, isPointInPolygon } from "geolib";
-//import DropDownPicker from "react-native-dropdown-picker";
+import DropDownPicker from "react-native-dropdown-picker";
 
 import taxiStandMarker from "../assets/taximarker.png";
 //import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
