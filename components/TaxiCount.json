@@ -1,0 +1,31 @@
+[
+    {
+        "area": "QUEENSTOWN",
+        "taxiCount": 28
+    },
+    {
+        "area": "DOWNTOWN CORE",
+        "taxiCount": 61
+    },
+    {
+        "area": "ORCHARD",
+        "taxiCount": 15
+    },
+    {
+        "area": "NEWTON",
+        "taxiCount": 10
+    },
+    {
+        "area": "ANG MO KIO",
+        "taxiCount": 46
+    },
+    {
+        "area": "BEDOK",
+        "taxiCount": 60
+    },
+    {
+        "area": "BISHAN",
+        "taxiCount": 20
+    }
+]
+

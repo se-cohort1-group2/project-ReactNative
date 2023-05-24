@@ -11,6 +11,7 @@ import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
 
 const taxiStandData = require("./TaxiStands.json");
 const taxiAvailability = require("./TaxiAvailability.json");
+const taxiCountData = require("./TaxiCount.json");
 
 function TaxiStand() {
     return (
@@ -76,6 +77,27 @@ export default function MapScreen() {
     //Taxi count
     const [taxisAvailable, setTaxisAvailable] = useState(0);
 
+    // //takes too long to iterate through
+    // function logMapElements(value1, key, map) {
+    //     let taxiCount = 0;
+    //         taxiAvailability.value.forEach(stand => {
+    //             if (isPointInPolygon({ latitude: stand.Latitude, longitude: stand.Longitude }, value1)) {
+    //                 taxiCount += 1;
+    //             }
+    //         })
+    //     console.log(key + ": " + taxiCount);
+    // }
+
+    // //Count taxis in polygon
+    // function testFunction() {
+    //     const map1 = new Map();
+    //     AreaPolygonList.forEach(area => {
+    //         map1.set(area.pln_area_n, handlerSelectArea(area.pln_area_n));
+    //     })
+    //     map1.forEach(logMapElements);
+    // }
+
+
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -88,6 +110,7 @@ export default function MapScreen() {
         })();
 
         funcGetPlanningAreaStatic(setAreaPolygonList); //Get static planning area
+        // testFunction();
     }, []);
 
     let text = "Waiting..";
@@ -120,17 +143,25 @@ export default function MapScreen() {
         })
         setPolygon(swapCoord[0][0][0][0]);
 
-        //Count taxis in polygon
+        //get taxi count from json
         let taxiCount = 0;
-        taxiAvailability.value.forEach(stand => {
-            if (isPointInPolygon({ latitude: stand.Latitude, longitude: stand.Longitude }, swapCoord[0][0][0][0])) {
-                taxiCount += 1;
+        taxiCountData.map(obj => {
+            if (obj.area === id) {
+                taxiCount = obj.taxiCount;
             }
-        })
-        console.log(taxiCount);
+        });
         setTaxisAvailable(taxiCount);
-        // setCenter(swapCoord[0][0][0][0][0]);
-        // setZoom(13.5);
+
+        //Count taxis in polygon - takes too long to generate each count
+        // let taxiCount = 0;
+        // taxiAvailability.value.forEach(stand => {
+        //     if (isPointInPolygon({ latitude: stand.Latitude, longitude: stand.Longitude }, swapCoord[0][0][0][0])) {
+        //         taxiCount += 1;
+        //     }
+        // })
+        // console.log(taxiCount);
+        // setTaxisAvailable(taxiCount);
+
     }
 
     return (
@@ -161,7 +192,6 @@ export default function MapScreen() {
                 setValue={setValue}
                 setItems={setItems}
                 onChangeValue={(value) => {
-                    console.log(value);
                     handlerSelectArea(value);
                 }}
             />
