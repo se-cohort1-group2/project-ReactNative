@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
@@ -11,6 +12,10 @@ import TaxiStandsScreen from "./components/TaxiStandsScreen";
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+
+    const [JumpToLatitude, setJumpToLatitude] = useState(1.291210939);
+    const [JumpToLongitude, setJumpToLongitude] = useState(103.8459884);
+
     return (
         <NavigationContainer>
             <Tab.Navigator
@@ -28,8 +33,24 @@ export default function App() {
                     tabBarInactiveTintColor: "gray",
                 })}
             >
-                <Tab.Screen name="Map" component={MapScreen}/>
-                <Tab.Screen name="Taxi Stands" component={TaxiStandsScreen}/>
+                <Tab.Screen
+                    name="Map"
+                    children={props => <MapScreen
+                        {...props}
+                        JumpToLatitude={JumpToLatitude}
+                        JumpToLongitude={JumpToLongitude}
+                        setJumpToLatitude={setJumpToLatitude}
+                        setJumpToLongitude={setJumpToLongitude}
+                    />}
+                />
+                <Tab.Screen
+                    name="Taxi Stands"
+                    children={props => <TaxiStandsScreen
+                        {...props}
+                        setJumpToLatitude={setJumpToLatitude}
+                        setJumpToLongitude={setJumpToLongitude}
+                    />}
+                />
             </Tab.Navigator>
         </NavigationContainer>
     )

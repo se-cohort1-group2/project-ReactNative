@@ -5,7 +5,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import TaxiStandsList from "./TaxiStands.json";
 
-export default function TaxiStandsScreen({ navigation }) {
+export default function TaxiStandsScreen({ navigation, setJumpToLatitude, setJumpToLongitude }) {
 
     const GoToMap = () => {
         navigation.navigate("Map")
@@ -61,6 +61,8 @@ export default function TaxiStandsScreen({ navigation }) {
                         setSelectedItem(null)
                     } else {
                         setSelectedItem(item.TaxiCode)
+                        setJumpToLatitude(item.Latitude)
+                        setJumpToLongitude(item.Longitude)
                     }
                     //console.log(`Taxi Stand/Stop ${item.TaxiCode} selected`)
                 }}

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Alert } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { StyleSheet, Text, View, Alert, Image, Button, Pressable } from "react-native";
 
 import * as Location from "expo-location";
 import MapView, { Marker, Polygon, Polyline, Callout } from "react-native-maps";
@@ -12,6 +12,8 @@ import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
 const taxiStandData = require("./TaxiStands.json");
 const taxiAvailability = require("./TaxiAvailability.json");
 
+const taxiStandMarkerURI = Image.resolveAssetSource(taxiStandMarker).uri
+
 function TaxiStand({ userLocation, distance, setSelectedLocation, setShowPolyLine, setDistance }) {
     return (
         taxiStandData.value.map((item, index) => {
@@ -20,9 +22,10 @@ function TaxiStand({ userLocation, distance, setSelectedLocation, setShowPolyLin
                     key={index}
                     coordinate={{ latitude: item.Latitude, longitude: item.Longitude }}
                     onPress={() => selectTaxiStand(userLocation, item.TaxiCode, item.Name, item.Latitude, item.Longitude, setSelectedLocation, setShowPolyLine, setDistance)}
-                    centerOffset={{ x: -18, y: -60 }}
-                    anchor={{ x: 0.69, y: 1 }}
-                    image={taxiStandMarker}
+                    //centerOffset={{ x: -18, y: -60 }}
+                    //anchor={{ x: 0.69, y: 1 }}
+                    image={{uri: taxiStandMarkerURI}}
+                    //image={taxiStandMarker}
                 >
                     {distance != null &&
                         <Callout>
@@ -53,7 +56,7 @@ function selectTaxiStand(userLocation, taxiCode, name, latitude, longitude, setS
     )
 }
 
-export default function MapScreen() {
+export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLatitude, setJumpToLongitude }) {
 
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
@@ -117,7 +120,7 @@ export default function MapScreen() {
     if (errorMsg) {
         text = errorMsg;
     } else if (location) {
-        text = "Location detected."
+        text = "Tap to view detected location."
         userLocation.latitude = location.coords.latitude;
         userLocation.longitude = location.coords.longitude;
     }
@@ -152,13 +155,40 @@ export default function MapScreen() {
         // setZoom(13.5);
     }
 
+    const mapRef = useRef(null);
+
+    const JumpToRegion = () => {
+        mapRef.current.animateToRegion({
+            latitude: JumpToLatitude,
+            longitude: JumpToLongitude,
+            //latitude: 1.291210939,
+            //longitude: 103.8459884,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+            //latitudeDelta: 0.002,
+            //longitudeDelta: 0.002,
+        }, 1000)
+    }
+
+    useEffect(() => {
+        JumpToRegion();
+    }, [JumpToLatitude, JumpToLongitude]);
+
+    const JumpToCurrentLocation = () => {
+        setJumpToLatitude(location.coords.latitude)
+        setJumpToLongitude(location.coords.longitude)
+    }
+
     return (
         <View style={styles.mainContainer}>
             <View style={styles.topContainer}>
-                <Text style={styles.footer}>{text}{distance != null && " Selected location is " + `${distance}` + "m away."}</Text>
+                <Pressable onPress={JumpToCurrentLocation}>
+                    <Text style={styles.footer}>{text}{distance != null && " Selected location is " + `${distance}` + "m away."}</Text>
+                </Pressable>
             </View>
             <View style={styles.mapContainer}>
                 <MapView
+                    ref={mapRef}
                     style={styles.map}
                     showsUserLocation={true}
                     zoomTapEnabled={true}
