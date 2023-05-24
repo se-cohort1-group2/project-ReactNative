@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Alert } from "react-native";
 
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
+import DropDownPicker from 'react-native-dropdown-picker';
 
 import taxiStandMarker from "../assets/taximarker.png";
 
@@ -37,6 +38,27 @@ export default function MapScreen() {
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
 
+    //Set initial view
+    const [center, setCenter] = useState([1.343, 103.814]);
+    const camera = {
+        center: {
+            latitude: center[0],
+            longitude: center[1],
+        },
+        pitch: 2,
+        heading: 20,
+        altitude: 50000, // Only on iOS MapKit, in meters. The property is ignored by Google Maps.
+        zoom: 12 // Only when using Google Maps.
+    }
+
+    //DropdownPicker
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [items, setItems] = useState([
+        { label: 'QUEENSTOWN', value: 'QUEENSTOWN' },
+        { label: 'DOWNTOWN CORE', value: 'DOWNTOWN CORE' }
+    ]);
+
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -69,9 +91,23 @@ export default function MapScreen() {
                 showsUserLocation={true}
                 followsUserLocation={true}
                 zoomTapEnabled={true}
+                initialCamera={camera}
             >
-                <TaxiStand/>
+                <TaxiStand />
             </MapView>
+            <DropDownPicker
+                containerStyle={styles.dropdown}
+                labelStyle={styles.dropdownlabel}
+                open={open}
+                value={value}
+                items={items}
+                setOpen={setOpen}
+                setValue={setValue}
+                setItems={setItems}
+                onChangeValue={(value) => {
+                    console.log(value);
+                  }}
+            />
             <Text style={styles.footer}>{text}</Text>
         </View>
     )
@@ -83,7 +119,7 @@ const styles = StyleSheet.create({
     },
     map: {
         width: "95%",
-        height: "92%",
+        height: "80%",
         marginHorizontal: "2.5%",
         marginTop: "2.5%",
     },
@@ -91,9 +127,20 @@ const styles = StyleSheet.create({
         alignItems: "stretch",
         color: "#2E4053",
         backgroundColor: "#D5D8DC",
-        textAlign:"center",
+        textAlign: "center",
         fontSize: 12,
         padding: 5,
-        margin:10,
+        margin: 10,
     },
+    dropdown: {
+        width: "95%",
+        alignItems: "center",
+        marginHorizontal: "2.5%",
+        marginTop: "2.5%",
+    },
+    dropdownlabel: {
+        width: "95%",
+        alignItems: "center",
+
+    }
 })
