@@ -5,35 +5,47 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import TaxiStandsList from "./TaxiStands.json";
 
-export default function TaxiStands() {
+export default function TaxiStands({ navigation }) {
+
+    const GoToMap = () => {
+        navigation.navigate("Map")
+    }
 
     const [SelectedItem, setSelectedItem] = useState(null);
 
     const Item = ({item, onPress, backgroundColor, textColor}) => (
-        <Pressable style={[styles.item, {backgroundColor}]} onPress={onPress}>
+        <View style={[styles.itemOuter, {backgroundColor}]}>
 
-            <View style={styles.itemLeft}>
-                <Text style={[styles.itemText, {color: textColor}]}>Code:&nbsp;</Text>
-            </View>
-            <View style={styles.itemRight}>
-                <Text style={[styles.itemText, {color: textColor}, {fontWeight: "bold"}]}>{item.TaxiCode}</Text>
-            </View>
+            {item.TaxiCode === SelectedItem ?
+            <Pressable style={{ position: "absolute", top: 15, right: 15 }} onPress={GoToMap}>
+                <Ionicons name="ios-location-outline" size={30} color="#fff"/>
+            </Pressable>
+            : <></>}
 
-            <View style={styles.itemLeft}>
-                <Text style={[styles.itemText, {color: textColor}]}>Type:&nbsp;</Text>
-            </View>
-            <View style={styles.itemRight}>
-                <Text style={[styles.itemText, {color: textColor}]}>{item.Type}</Text>
-            </View>
+            <Pressable style={[styles.itemInner, /* {borderWidth:1,borderColor:"black"} */]} onPress={onPress}>
+                <View style={styles.itemLeft}>
+                    <Text style={[styles.itemText, {color: textColor}]}>Code:&nbsp;</Text>
+                </View>
+                <View style={styles.itemRight}>
+                    <Text style={[styles.itemText, {color: textColor}, {fontWeight: "bold"}]}>{item.TaxiCode}</Text>
+                </View>
 
-            <View style={styles.itemLeft}>
-                <Text style={[styles.itemText, {color: textColor}]}>Location:&nbsp;</Text>
-            </View>
-            <View style={styles.itemRight}>
-                <Text style={[styles.itemText, {color: textColor}]}>{item.Name}</Text>
-            </View>
+                <View style={styles.itemLeft}>
+                    <Text style={[styles.itemText, {color: textColor}]}>Type:&nbsp;</Text>
+                </View>
+                <View style={styles.itemRight}>
+                    <Text style={[styles.itemText, {color: textColor}]}>{item.Type}</Text>
+                </View>
 
-        </Pressable>
+                <View style={styles.itemLeft}>
+                    <Text style={[styles.itemText, {color: textColor}]}>Location:&nbsp;</Text>
+                </View>
+                <View style={styles.itemRight}>
+                    <Text style={[styles.itemText, {color: textColor}]}>{item.Name}</Text>
+                </View>
+            </Pressable>
+
+        </View>
     )
 
     const renderItem = ({item}) => {
@@ -91,15 +103,18 @@ export default function TaxiStands() {
 }
 
 const styles = StyleSheet.create({
-    item: {
-        paddingVertical: 15,
-        paddingHorizontal: 20,
+    itemOuter: {
+        paddingVertical: 18,
+        paddingLeft: 10,
+        paddingRight: 40,
         marginHorizontal: 16,
         marginBottom: 16,
+        borderRadius: 20,
+    },
+    itemInner: {
         flexDirection: "row",
         flexWrap: "wrap",
         rowGap: 5,
-        borderRadius: 20,
     },
     itemLeft: {
         alignItems: "flex-end",
