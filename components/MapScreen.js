@@ -49,7 +49,7 @@ export default function MapScreen() {
         })();
     }, []);
 
-    let text = "Waiting..";
+    let text = "Detecting location...";
     let userLocation = {
         latitude: null,
         longitude: null
@@ -64,15 +64,20 @@ export default function MapScreen() {
 
     return (
         <View style={styles.container}>
-            <MapView
-                style={styles.map}
-                showsUserLocation={true}
-                followsUserLocation={true}
-                zoomTapEnabled={true}
-            >
-                <TaxiStand/>
-            </MapView>
-            <Text style={styles.footer}>{text}</Text>
+
+            <View style={styles.mapContainer}>
+                <MapView
+                    style={styles.map}
+                    showsUserLocation={true}
+                >
+                    <TaxiStand/>
+                </MapView>
+            </View>
+
+            <View style={styles.locationBar}>
+                <Text style={styles.locationText}>{text}</Text>
+            </View>
+
         </View>
     )
 }
@@ -82,18 +87,20 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     map: {
-        width: "95%",
-        height: "92%",
-        marginHorizontal: "2.5%",
-        marginTop: "2.5%",
+        width: "100%",
+        height: "100%",
     },
-    footer: {
-        alignItems: "stretch",
-        color: "#2E4053",
+    mapContainer: {
+        height: "96%",
+    },
+    locationBar: {
+        height: "4%",
+        justifyContent: "center",
         backgroundColor: "#D5D8DC",
-        textAlign:"center",
+    },
+    locationText: {
+        color: "#2E4053",
+        textAlign: "center",
         fontSize: 12,
-        padding: 5,
-        margin:10,
     },
 })

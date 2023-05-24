@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, ScrollView, FlatList, Pressable, TextInput } from "react-native";
+import { StyleSheet, Text, View, FlatList, Pressable, TextInput } from "react-native";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -22,7 +22,7 @@ export default function TaxiStands({ navigation }) {
             </Pressable>
             : <></>}
 
-            <Pressable style={[styles.itemInner, /* {borderWidth:1,borderColor:"black"} */]} onPress={onPress}>
+            <Pressable style={styles.itemInner} onPress={onPress}>
                 <View style={styles.itemLeft}>
                     <Text style={[styles.itemText, {color: textColor}]}>Code:&nbsp;</Text>
                 </View>
