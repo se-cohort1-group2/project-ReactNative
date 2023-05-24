@@ -27,7 +27,7 @@ function TaxiStand({ userLocation, distance, setSelectedLocation, setShowPolyLin
                     {distance != null &&
                         <Callout>
                             <View>
-                                <Text>{distance}km from me</Text>
+                                <Text>{distance}m from me</Text>
                             </View>
                         </Callout>
                     }
@@ -155,7 +155,7 @@ export default function MapScreen() {
     return (
         <View style={styles.mainContainer}>
             <View style={styles.topContainer}>
-                <Text style={styles.footer}>{text}{distance != null && " Selected location is " + `${distance}` + "km away."}</Text>
+                <Text style={styles.footer}>{text}{distance != null && " Selected location is " + `${distance}` + "m away."}</Text>
             </View>
             <View style={styles.mapContainer}>
                 <MapView
