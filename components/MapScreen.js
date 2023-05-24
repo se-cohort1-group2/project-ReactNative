@@ -4,11 +4,13 @@ import { StyleSheet, Text, View, Alert } from "react-native";
 import * as Location from "expo-location";
 import MapView, { Marker, Polygon } from "react-native-maps";
 import DropDownPicker from 'react-native-dropdown-picker';
+import { getCenterOfBounds, isPointInPolygon } from 'geolib';
 
 import taxiStandMarker from "../assets/taximarker.png";
 import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
 
 const taxiStandData = require("./TaxiStands.json");
+const taxiAvailability = require("./TaxiAvailability.json");
 
 function TaxiStand() {
     return (
@@ -71,6 +73,9 @@ export default function MapScreen() {
         }
     ]);
 
+    //Taxi count
+    const [taxisAvailable, setTaxisAvailable] = useState(0);
+
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -114,6 +119,16 @@ export default function MapScreen() {
             return [swapCoordSet1];
         })
         setPolygon(swapCoord[0][0][0][0]);
+
+        //Count taxis in polygon
+        let taxiCount = 0;
+        taxiAvailability.value.forEach(stand => {
+            if (isPointInPolygon({ latitude: stand.Latitude, longitude: stand.Longitude }, swapCoord[0][0][0][0])) {
+                taxiCount += 1;
+            }
+        })
+        console.log(taxiCount);
+        setTaxisAvailable(taxiCount);
         // setCenter(swapCoord[0][0][0][0][0]);
         // setZoom(13.5);
     }
@@ -131,9 +146,10 @@ export default function MapScreen() {
                 <Polygon
                     coordinates={polygon}
                     strokeColor="#F00"
-                    fillColor="rgba(255,0,0,0.2)"
+                    fillColor="rgba(255,0,0,0.1)"
                     strokeWidth={1}
                 />
+
             </MapView>
             <DropDownPicker
                 containerStyle={styles.dropdown}
@@ -149,6 +165,7 @@ export default function MapScreen() {
                     handlerSelectArea(value);
                 }}
             />
+            <Text>Taxis available in area: {taxisAvailable}</Text>
             <Text style={styles.footer}>{text}</Text>
         </View>
     )
