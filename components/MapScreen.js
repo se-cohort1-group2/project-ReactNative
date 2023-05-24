@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Alert } from "react-native";
 
 import * as Location from "expo-location";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Polygon } from "react-native-maps";
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import taxiStandMarker from "../assets/taximarker.png";
+import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
 
 const taxiStandData = require("./TaxiStands.json");
 
@@ -56,7 +57,18 @@ export default function MapScreen() {
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
         { label: 'QUEENSTOWN', value: 'QUEENSTOWN' },
-        { label: 'DOWNTOWN CORE', value: 'DOWNTOWN CORE' }
+        { label: 'DOWNTOWN CORE', value: 'DOWNTOWN CORE' },
+        { label: 'NEWTON', value: 'NEWTON' },
+        { label: 'ORCHARD', value: 'ORCHARD' },
+    ]);
+
+    //Planning area
+    const [AreaPolygonList, setAreaPolygonList] = useState([]);
+    const [polygon, setPolygon] = useState([
+        {
+            latitude: 1.343,
+            longitude: 103.814
+        }
     ]);
 
     useEffect(() => {
@@ -69,6 +81,8 @@ export default function MapScreen() {
             let location = await Location.getCurrentPositionAsync({});
             setLocation(location);
         })();
+
+        funcGetPlanningAreaStatic(setAreaPolygonList); //Get static planning area
     }, []);
 
     let text = "Waiting..";
@@ -84,6 +98,26 @@ export default function MapScreen() {
         userLocation.longitude = location.coords.longitude;
     }
 
+    //Handler to display polygon for selected area
+    const handlerSelectArea = (id) => {
+        const foundIndex = AreaPolygonList.findIndex((item) => item.pln_area_n === id);
+        const parsedGeoJson = JSON.parse(AreaPolygonList[foundIndex].geojson);
+        let swapCoord = parsedGeoJson.coordinates.map((coordSet1) => {
+            let swapCoordSet1 = coordSet1.map((coordSet2) => {
+                let swapCoordSet2 = coordSet2.map((coord) => {
+                    return {
+                        latitude: coord[1], longitude: coord[0]
+                    }
+                })
+                return [swapCoordSet2];
+            })
+            return [swapCoordSet1];
+        })
+        setPolygon(swapCoord[0][0][0][0]);
+        // setCenter(swapCoord[0][0][0][0][0]);
+        // setZoom(13.5);
+    }
+
     return (
         <View style={styles.container}>
             <MapView
@@ -94,6 +128,12 @@ export default function MapScreen() {
                 initialCamera={camera}
             >
                 <TaxiStand />
+                <Polygon
+                    coordinates={polygon}
+                    strokeColor="#F00"
+                    fillColor="rgba(255,0,0,0.2)"
+                    strokeWidth={1}
+                />
             </MapView>
             <DropDownPicker
                 containerStyle={styles.dropdown}
@@ -106,7 +146,8 @@ export default function MapScreen() {
                 setItems={setItems}
                 onChangeValue={(value) => {
                     console.log(value);
-                  }}
+                    handlerSelectArea(value);
+                }}
             />
             <Text style={styles.footer}>{text}</Text>
         </View>
