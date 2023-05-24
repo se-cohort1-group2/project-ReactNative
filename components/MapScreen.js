@@ -7,10 +7,10 @@ import { getDistance, getCenterOfBounds, isPointInPolygon } from "geolib";
 import DropDownPicker from "react-native-dropdown-picker";
 
 import taxiStandMarker from "../assets/taximarker.png";
-//import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
+import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
 
 const taxiStandData = require("./TaxiStands.json");
-//const taxiAvailability = require("./TaxiAvailability.json");
+const taxiAvailability = require("./TaxiAvailability.json");
 
 function TaxiStand({ userLocation, distance, setSelectedLocation, setShowPolyLine, setDistance }) {
     return (
@@ -61,6 +61,41 @@ export default function MapScreen() {
     const [distance, setDistance] = useState(null);
     const [showPolyLine, setShowPolyLine] = useState(false);
 
+    //Set initial view
+    const [center, setCenter] = useState([1.343, 103.814]);
+    const camera = {
+        center: {
+            latitude: center[0],
+            longitude: center[1],
+        },
+        pitch: 2,
+        heading: 20,
+        altitude: 50000, // Only on iOS MapKit, in meters. The property is ignored by Google Maps.
+        zoom: 12 // Only when using Google Maps.
+    }
+
+    //DropdownPicker
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [items, setItems] = useState([
+        { label: 'QUEENSTOWN', value: 'QUEENSTOWN' },
+        { label: 'DOWNTOWN CORE', value: 'DOWNTOWN CORE' },
+        { label: 'NEWTON', value: 'NEWTON' },
+        { label: 'ORCHARD', value: 'ORCHARD' },
+    ]);
+
+    //Planning area
+    const [AreaPolygonList, setAreaPolygonList] = useState([]);
+    const [polygon, setPolygon] = useState([
+        {
+            latitude: 1.343,
+            longitude: 103.814
+        }
+    ]);
+
+    //Taxi count
+    const [taxisAvailable, setTaxisAvailable] = useState(0);
+
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -71,7 +106,7 @@ export default function MapScreen() {
             let location = await Location.getCurrentPositionAsync({});
             setLocation(location);
         })();
-        //funcGetPlanningAreaStatic(setAreaPolygonList); //Get static planning area
+        funcGetPlanningAreaStatic(setAreaPolygonList); //Get static planning area
     }, []);
 
     let text = "Waiting..";
@@ -87,14 +122,50 @@ export default function MapScreen() {
         userLocation.longitude = location.coords.longitude;
     }
 
+    //Handler to display polygon for selected area
+    const handlerSelectArea = (id) => {
+        const foundIndex = AreaPolygonList.findIndex((item) => item.pln_area_n === id);
+        const parsedGeoJson = JSON.parse(AreaPolygonList[foundIndex].geojson);
+        let swapCoord = parsedGeoJson.coordinates.map((coordSet1) => {
+            let swapCoordSet1 = coordSet1.map((coordSet2) => {
+                let swapCoordSet2 = coordSet2.map((coord) => {
+                    return {
+                        latitude: coord[1], longitude: coord[0]
+                    }
+                })
+                return [swapCoordSet2];
+            })
+            return [swapCoordSet1];
+        })
+        setPolygon(swapCoord[0][0][0][0]);
+
+        //Count taxis in polygon
+        let taxiCount = 0;
+        taxiAvailability.value.forEach(stand => {
+            if (isPointInPolygon({ latitude: stand.Latitude, longitude: stand.Longitude }, swapCoord[0][0][0][0])) {
+                taxiCount += 1;
+            }
+        })
+        console.log(taxiCount);
+        setTaxisAvailable(taxiCount);
+        // setCenter(swapCoord[0][0][0][0][0]);
+        // setZoom(13.5);
+    }
+
     return (
         <View style={styles.container}>
             <MapView
                 style={styles.map}
                 showsUserLocation={true}
                 zoomTapEnabled={true}
-                //initialCamera={camera}
+                initialCamera={camera}
             >
+                <Polygon
+                    coordinates={polygon}
+                    strokeColor="#F00"
+                    fillColor="rgba(255,0,0,0.1)"
+                    strokeWidth={1}
+                />
                 <TaxiStand
                     userLocation={userLocation}
                     distance={distance}
@@ -113,6 +184,21 @@ export default function MapScreen() {
             <Text style={styles.footer}>
                 {text}{distance != null && " Selected location is " + `${distance}` + "km away."}
             </Text>
+            <DropDownPicker
+                containerStyle={styles.dropdown}
+                labelStyle={styles.dropdownlabel}
+                open={open}
+                value={value}
+                items={items}
+                setOpen={setOpen}
+                setValue={setValue}
+                setItems={setItems}
+                onChangeValue={(value) => {
+                    console.log(value);
+                    handlerSelectArea(value);
+                }}
+            />
+            <Text style={styles.footer}>Taxis available in area: {taxisAvailable}</Text>
         </View>
     )
 }
@@ -123,14 +209,24 @@ const styles = StyleSheet.create({
     },
     map: {
         width: "100%",
-        height: "85%",
+        height: "75%",
     },
     footer: {
         color: "#2E4053",
         backgroundColor: "#D5D8DC",
         textAlign: "center",
-        padding: 5,
         fontSize: 12,
-        height: "5%",
+        padding: 5,
+        margin: 10,
     },
+    dropdown: {
+        width: "95%",
+        alignItems: "center",
+        marginHorizontal: "2.5%",
+        marginTop: "2.5%",
+    },
+    dropdownlabel: {
+        width: "95%",
+        alignItems: "center",
+    }
 })
