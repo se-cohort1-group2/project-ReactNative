@@ -21,10 +21,7 @@ function TaxiStand({ userLocation, distance, setSelectedLocation, setShowPolyLin
                     key={index}
                     coordinate={{ latitude: item.Latitude, longitude: item.Longitude }}
                     onPress={() => selectTaxiStand(userLocation, item.TaxiCode, item.Name, item.Latitude, item.Longitude, setSelectedLocation, setShowPolyLine, setDistance)}
-                    //centerOffset={{ x: -18, y: -60 }}
-                    //anchor={{ x: 0.69, y: 1 }}
                     image={{uri: taxiStandMarkerURI}}
-                    //image={taxiStandMarker}
                 >
                     {distance != null &&
                         <Callout>
@@ -81,6 +78,10 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
         { labelStyle: {padding: 5}, label: "DOWNTOWN CORE", value: "DOWNTOWN CORE" },
+        { labelStyle: {padding: 5}, label: "NEWTON", value: "NEWTON" },
+        { labelStyle: {padding: 5}, label: "ORCHARD", value: "ORCHARD" },
+        { labelStyle: {padding: 5}, label: "PASIR RIS", value: "PASIR RIS" },
+        { labelStyle: {padding: 5}, label: "QUEENSTOWN", value: "QUEENSTOWN" },
         { labelStyle: {padding: 5}, label: "ANG MO KIO", value: "ANG MO KIO" },
         { labelStyle: {padding: 5}, label: "BEDOK", value: "BEDOK" },
         { labelStyle: {padding: 5}, label: "BISHAN", value: "BISHAN" },
@@ -92,10 +93,6 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
         { labelStyle: {padding: 5}, label: "JURONG WEST", value: "JURONG WEST" },
         { labelStyle: {padding: 5}, label: "KALLANG", value: "KALLANG" },
         { labelStyle: {padding: 5}, label: "MARINE PARADE", value: "MARINE PARADE" },
-        { labelStyle: {padding: 5}, label: "NEWTON", value: "NEWTON" },
-        { labelStyle: {padding: 5}, label: "ORCHARD", value: "ORCHARD" },
-        { labelStyle: {padding: 5}, label: "PASIR RIS", value: "PASIR RIS" },
-        { labelStyle: {padding: 5}, label: "QUEENSTOWN", value: "QUEENSTOWN" },
     ]);
 
     //Planning area
@@ -146,6 +143,9 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
             return [swapCoordSet1];
         })
         setPolygon(swapCoord[0][0][0][0]);
+        console.log(getCenterOfBounds(swapCoord[0][0][0][0]));
+        setJumpToLatitude(getCenterOfBounds(swapCoord[0][0][0][0]).latitude)
+        setJumpToLongitude(getCenterOfBounds(swapCoord[0][0][0][0]).longitude)
 
         //get taxi count from json
         let taxiCount = 0;
@@ -283,9 +283,15 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
     },
+    topContainer: {
+        //height: 25,
+    },
     mapContainer: {
         flexBasis: "50%",
         flexGrow: 1,
+    },
+    bottomContainer: {
+        //height: 105,
     },
     footer: {
         backgroundColor: "#D5D8DC",
@@ -296,7 +302,8 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         alignItems: "center",
-        padding: 15,
+        paddingHorizontal: 15,
+        paddingVertical: 20,
     },
     dropdownlabel: {
         padding: 5,
