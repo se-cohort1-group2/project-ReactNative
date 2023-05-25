@@ -80,10 +80,22 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
-        { labelStyle: {padding: 5}, label: "QUEENSTOWN", value: "QUEENSTOWN" },
         { labelStyle: {padding: 5}, label: "DOWNTOWN CORE", value: "DOWNTOWN CORE" },
+        { labelStyle: {padding: 5}, label: "ANG MO KIO", value: "ANG MO KIO" },
+        { labelStyle: {padding: 5}, label: "BEDOK", value: "BEDOK" },
+        { labelStyle: {padding: 5}, label: "BISHAN", value: "BISHAN" },
+        { labelStyle: {padding: 5}, label: "BUKIT BATOK", value: "BUKIT BATOK" },
+        { labelStyle: {padding: 5}, label: "CHOA CHU KANG", value: "CHOA CHU KANG" },
+        { labelStyle: {padding: 5}, label: "CLEMENTI", value: "CLEMENTI" },
+        { labelStyle: {padding: 5}, label: "GEYLANG", value: "GEYLANG" },
+        { labelStyle: {padding: 5}, label: "HOUGANG", value: "HOUGANG" },
+        { labelStyle: {padding: 5}, label: "JURONG WEST", value: "JURONG WEST" },
+        { labelStyle: {padding: 5}, label: "KALLANG", value: "KALLANG" },
+        { labelStyle: {padding: 5}, label: "MARINE PARADE", value: "MARINE PARADE" },
         { labelStyle: {padding: 5}, label: "NEWTON", value: "NEWTON" },
         { labelStyle: {padding: 5}, label: "ORCHARD", value: "ORCHARD" },
+        { labelStyle: {padding: 5}, label: "PASIR RIS", value: "PASIR RIS" },
+        { labelStyle: {padding: 5}, label: "QUEENSTOWN", value: "QUEENSTOWN" },
     ]);
 
     //Planning area
