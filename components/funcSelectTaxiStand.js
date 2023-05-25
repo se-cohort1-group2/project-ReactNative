@@ -1,7 +1,7 @@
 import { Alert } from "react-native";
 import { getDistance } from "geolib";
 
-export default function funcSelectTaxiStand({ item, userLocation, selectedLocations, setSelectedLocations, setCurrentSelection }) {
+export default function funcSelectTaxiStand({ item, userLocation, selectedLocations, setSelectedLocations, setCurrentSelection, navigation }) {
 
     setCurrentSelection(item);
 
@@ -23,13 +23,12 @@ export default function funcSelectTaxiStand({ item, userLocation, selectedLocati
             { text: "Add", onPress: () => {
                 item.Distance = getDistance(userLocation,{latitude: item.Latitude,longitude: item.Longitude});
                 setSelectedLocations(selectedLocations => new Set(selectedLocations).add(item));
-                console.log(selectedLocations);
-                console.log("----------");
+                navigation.navigate("Selected")
             }},
             { text: "Remove", onPress: () => {
                 removeSelectedLocation({item});
             }},
-            { text: "Cancel", onPress: () => console.log("Pressed cancelled"), style: "cancel" }
+            { text: "Cancel", onPress: () => {}, style: "cancel" }
         ],
         { cancelable: true }
     )

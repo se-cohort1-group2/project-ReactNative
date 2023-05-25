@@ -11,7 +11,7 @@ import TaxiStand from "./TaxiStand";
 const taxiCountData = require("./TaxiCount.json");
 const taxiAvailability = require("./TaxiAvailability.json");
 
-export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLatitude, setJumpToLongitude, selectedLocations, setSelectedLocations }) {
+export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLatitude, setJumpToLongitude, selectedLocations, setSelectedLocations, navigation }) {
 
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
@@ -100,7 +100,7 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
             return [swapCoordSet1];
         })
         setPolygon(swapCoord[0][0][0][0]);
-        console.log(getCenterOfBounds(swapCoord[0][0][0][0]));
+        //console.log(getCenterOfBounds(swapCoord[0][0][0][0]));
         setJumpToLatitude(getCenterOfBounds(swapCoord[0][0][0][0]).latitude)
         setJumpToLongitude(getCenterOfBounds(swapCoord[0][0][0][0]).longitude)
 
@@ -175,7 +175,9 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
         <View style={styles.mainContainer}>
             <View style={styles.topContainer}>
                 <Pressable onPress={JumpToCurrentLocation}>
-                    <Text style={styles.footer}>{text}{currentSelection != null && " Selected location is " + `${currentSelection.Distance}` + "m away."}</Text>
+                    <Text style={styles.footer}>
+                        {text}{currentSelection != null && " Selected location is " + `${currentSelection.Distance/1000}` + "km away."}
+                    </Text>
                 </Pressable>
             </View>
             <View style={styles.mapContainer}>
@@ -197,9 +199,10 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
                         selectedLocations={selectedLocations}
                         setSelectedLocations={setSelectedLocations}
                         setCurrentSelection={setCurrentSelection}
+                        navigation={navigation}
                     />
                     {currentSelection != null && <Polyline
-                        coordinates={[ userLocation, {latitude: currentSelection.Latitude, longitude: currentSelection.Longitude}]}
+                        coordinates={[ userLocation, {latitude: currentSelection.Latitude, longitude: currentSelection.Longitude} ]}
                         strokeColor="#717D7E"
                         fillColor="#717D7E"
                         strokeWidth={6}

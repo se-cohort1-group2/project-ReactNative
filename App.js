@@ -28,10 +28,10 @@ export default function App() {
                             iconName = focused ? "ios-map" : "ios-map-outline";
                         } else if (route.name === "Taxi Stands") {
                             iconName = focused ? "ios-car" : "ios-car-outline";
-                        } else if (route.name === "Selected"){
+                        } else if (route.name === "Selected") {
                             iconName = focused ? "md-list-circle" : "md-list-circle-outline";
                         }
-                        return (<Ionicons name={iconName} size={size} color={color} />)
+                        return (<Ionicons name={iconName} size={size} color={color}/>)
                     },
                     tabBarActiveTintColor: "#007AFF",
                     tabBarInactiveTintColor: "gray",
@@ -45,16 +45,18 @@ export default function App() {
                         JumpToLongitude={JumpToLongitude}
                         setJumpToLatitude={setJumpToLatitude}
                         setJumpToLongitude={setJumpToLongitude}
-                        selectedLocations={selectedLocations} 
+                        selectedLocations={selectedLocations}
                         setSelectedLocations={setSelectedLocations}
                     />}
                 />
-                <Tab.Screen 
-                    name="Selected" 
-                    children={props => <SelectionListScreen 
-                        {...props} 
-                        selectedLocations={selectedLocations} 
-                        setSelectedLocations={setSelectedLocations}/>}/>
+                <Tab.Screen
+                    name="Selected"
+                    children={props => <SelectionListScreen
+                        {...props}
+                        selectedLocations={selectedLocations}
+                        setSelectedLocations={setSelectedLocations}
+                    />}
+                />
                 <Tab.Screen
                     name="Taxi Stands"
                     children={props => <TaxiStandsScreen
