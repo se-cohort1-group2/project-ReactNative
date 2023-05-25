@@ -9,54 +9,25 @@ import DropDownPicker from "react-native-dropdown-picker";
 import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
 import taxiStandMarker from "../assets/taximarker.png";
 const taxiStandMarkerURI = Image.resolveAssetSource(taxiStandMarker).uri
+
+import TaxiStand from "./TaxiStand";
+
 const taxiStandData = require("./TaxiStands.json");
 const taxiCountData = require("./TaxiCount.json");
 const taxiAvailability = require("./TaxiAvailability.json");
 
-function TaxiStand({ userLocation, distance, setSelectedLocation, setShowPolyLine, setDistance }) {
-    return (
-        taxiStandData.value.map((item, index) => {
-            return (
-                <Marker
-                    key={index}
-                    coordinate={{ latitude: item.Latitude, longitude: item.Longitude }}
-                    onPress={() => selectTaxiStand(userLocation, item.TaxiCode, item.Name, item.Latitude, item.Longitude, setSelectedLocation, setShowPolyLine, setDistance)}
-                    image={{uri: taxiStandMarkerURI}}
-                >
-                    {distance != null &&
-                        <Callout>
-                            <View>
-                                <Text>{distance}m from me</Text>
-                            </View>
-                        </Callout>
-                    }
-                </Marker>
-            )
-        })
-    )
-}
-
-function selectTaxiStand(userLocation, taxiCode, name, latitude, longitude, setSelectedLocation, setShowPolyLine, setDistance) {
-    Alert.alert(
-        "Taxi Stand: " + taxiCode,
-        "Address: " + name,
-        [
-            { text: "Navigate", onPress: () => {
-                setSelectedLocation({ latitude: latitude, longitude: longitude })
-                setDistance(getDistance(userLocation, { latitude: latitude, longitude: longitude }))
-                setShowPolyLine(true)
-            }},
-            { text: "Cancel", onPress: () => setShowPolyLine(false), style: "cancel" }
-        ],
-        { cancelable: false }
-    )
+const funcGetLastItem = (setOfItems) => {
+    const item = [...setOfItems].pop();
+    //console.log(item);
+    const position = {latitude: item.Latitude, longitude: item.Longitude}
+    return position;
 }
 
 export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLatitude, setJumpToLongitude }) {
 
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
-    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [selectedLocations, setSelectedLocations] = useState(new Set());
     const [distance, setDistance] = useState(null);
     const [showPolyLine, setShowPolyLine] = useState(false);
 
@@ -235,15 +206,17 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
                         fillColor="rgba(255,0,0,0.1)"
                         strokeWidth={1}
                     />
-                    <TaxiStand
+                    <TaxiStand 
                         userLocation={userLocation}
-                        distance={distance}
-                        setSelectedLocation={setSelectedLocation}
-                        setShowPolyLine={setShowPolyLine}
-                        setDistance={setDistance}
-                    />
+                        selectedLocations={selectedLocations}
+                        setSelectedLocations={setSelectedLocations}/>
+                    {selectedLocations.size >0  && <Polyline
+                      coordinates={[userLocation,funcGetLastItem(selectedLocations)]}
+                      strokeColor="#717D7E"
+                      fillColor="#717D7E"
+                      strokeWidth={6}/>}
                     {showPolyLine && <Polyline
-                        coordinates={[ userLocation, selectedLocation ]}
+                        coordinates={[ userLocation, selectedLocations ]}
                         strokeColor="#717D7E"
                         fillColor="#717D7E"
                         strokeWidth={6}
