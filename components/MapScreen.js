@@ -11,19 +11,11 @@ import TaxiStand from "./TaxiStand";
 const taxiCountData = require("./TaxiCount.json");
 const taxiAvailability = require("./TaxiAvailability.json");
 
-const funcGetLastItem = (setOfItems) => {
-    const item = [...setOfItems].pop();
-    //console.log(item);
-    const position = {latitude: item.Latitude, longitude: item.Longitude}
-    return position;
-}
-
 export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLatitude, setJumpToLongitude, selectedLocations, setSelectedLocations }) {
 
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
-    const [distance, setDistance] = useState(null);
-    const [showPolyLine, setShowPolyLine] = useState(false);
+    const [currentSelection, setCurrentSelection] = useState(null);
 
     //Set initial view
     const [center, setCenter] = useState([1.343, 103.814]);
@@ -183,7 +175,7 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
         <View style={styles.mainContainer}>
             <View style={styles.topContainer}>
                 <Pressable onPress={JumpToCurrentLocation}>
-                    <Text style={styles.footer}>{text}{distance != null && " Selected location is " + `${distance}` + "m away."}</Text>
+                    <Text style={styles.footer}>{text}{currentSelection != null && " Selected location is " + `${currentSelection.Distance}` + "m away."}</Text>
                 </Pressable>
             </View>
             <View style={styles.mapContainer}>
@@ -204,19 +196,20 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
                         userLocation={userLocation}
                         selectedLocations={selectedLocations}
                         setSelectedLocations={setSelectedLocations}
+                        setCurrentSelection={setCurrentSelection}
                     />
-                    {selectedLocations.size > 0 && <Polyline
-                        coordinates={[ userLocation, funcGetLastItem(selectedLocations) ]}
+                    {currentSelection != null && <Polyline
+                        coordinates={[ userLocation, {latitude: currentSelection.Latitude, longitude: currentSelection.Longitude}]}
                         strokeColor="#717D7E"
                         fillColor="#717D7E"
                         strokeWidth={6}
                     />}
-                    {showPolyLine && <Polyline
+                    {/* {showPolyLine && <Polyline
                         coordinates={[ userLocation, selectedLocations ]}
                         strokeColor="#717D7E"
                         fillColor="#717D7E"
                         strokeWidth={6}
-                    />}
+                    />} */}
                 </MapView>
             </View>
             <View style={styles.bottomContainer}>

@@ -8,14 +8,16 @@ import funcSelectTaxiStand from "./funcSelectTaxiStand";
 import taxiStandMarker from "../assets/taximarker.png";
 const taxiStandMarkerURI = Image.resolveAssetSource(taxiStandMarker).uri
 
-export default function TaxiStand({ userLocation, selectedLocations, setSelectedLocations }) {
+export default function TaxiStand({ userLocation, selectedLocations, setSelectedLocations, setCurrentSelection }) {
     return (
         taxiStandData.value.map((item, index) => {
             return (
                 <Marker
                     key={index}
                     coordinate={{ latitude: item.Latitude, longitude: item.Longitude }}
-                    onPress={() => funcSelectTaxiStand({ item, userLocation, selectedLocations, setSelectedLocations })}
+                    onPress={() => {
+                        funcSelectTaxiStand({ item, userLocation, selectedLocations, setSelectedLocations, setCurrentSelection })
+                    }}
                     image={{uri: taxiStandMarkerURI}}
                 >
                     {item.Distance != null &&

@@ -1,7 +1,9 @@
 import { Alert } from "react-native";
 import { getDistance } from "geolib";
 
-export default function funcSelectTaxiStand({ item, userLocation, selectedLocations, setSelectedLocations }) {
+export default function funcSelectTaxiStand({ item, userLocation, selectedLocations, setSelectedLocations, setCurrentSelection }) {
+
+    setCurrentSelection(item);
 
     function removeSelectedLocation() {
         let newLocations = new Set();
