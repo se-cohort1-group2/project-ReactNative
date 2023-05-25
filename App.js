@@ -26,6 +26,8 @@ export default function App() {
                             iconName = focused ? "ios-map" : "ios-map-outline";
                         } else if (route.name === "Taxi Stands") {
                             iconName = focused ? "ios-car" : "ios-car-outline";
+                        } else if (route.name === "Selected"){
+                            iconName = focused ? "md-list-circle" : "md-list-circle-outline";
                         }
                         return (<Ionicons name={iconName} size={size} color={color} />)
                     },
@@ -35,7 +37,7 @@ export default function App() {
             >
                 {/* <Tab.Screen name="Map" component={MapScreen}/> */}
                 <Tab.Screen name="Map" children={props => <MapScreen {...props} selectedLocations={selectedLocations} setSelectedLocations={setSelectedLocations}/>}/>
-                <Tab.Screen name="Selected" children={props => <SelectionListScreen {...props} selectedLocations={selectedLocations}/>}/>
+                <Tab.Screen name="Selected" children={props => <SelectionListScreen {...props} selectedLocations={selectedLocations} setSelectedLocations={setSelectedLocations}/>}/>
                 <Tab.Screen name="Taxi Stands" component={TaxiStandsScreen}/>
                 
             </Tab.Navigator>
