@@ -7,12 +7,7 @@ import { getDistance, getCenterOfBounds, isPointInPolygon } from "geolib";
 import DropDownPicker from "react-native-dropdown-picker";
 
 import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
-import taxiStandMarker from "../assets/taximarker.png";
-const taxiStandMarkerURI = Image.resolveAssetSource(taxiStandMarker).uri
-
 import TaxiStand from "./TaxiStand";
-
-const taxiStandData = require("./TaxiStands.json");
 const taxiCountData = require("./TaxiCount.json");
 const taxiAvailability = require("./TaxiAvailability.json");
 
@@ -209,12 +204,14 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
                     <TaxiStand 
                         userLocation={userLocation}
                         selectedLocations={selectedLocations}
-                        setSelectedLocations={setSelectedLocations}/>
-                    {selectedLocations.size >0  && <Polyline
-                      coordinates={[userLocation,funcGetLastItem(selectedLocations)]}
-                      strokeColor="#717D7E"
-                      fillColor="#717D7E"
-                      strokeWidth={6}/>}
+                        setSelectedLocations={setSelectedLocations}
+                    />
+                    {selectedLocations.size > 0 && <Polyline
+                        coordinates={[ userLocation, funcGetLastItem(selectedLocations) ]}
+                        strokeColor="#717D7E"
+                        fillColor="#717D7E"
+                        strokeWidth={6}
+                    />}
                     {showPolyLine && <Polyline
                         coordinates={[ userLocation, selectedLocations ]}
                         strokeColor="#717D7E"
@@ -229,7 +226,7 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
                     labelStyle={styles.dropdownlabel}
                     placeholderStyle={styles.dropdownlabel}
                     placeholder="Select a region"
-                    dropDownContainerStyle={{marginBottom: 18}}
+                    dropDownContainerStyle={{ marginBottom: 22 }}
                     open={open}
                     value={value}
                     items={items}
