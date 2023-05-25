@@ -64,7 +64,6 @@ export default function TaxiStandsScreen({ navigation, setJumpToLatitude, setJum
                         setJumpToLatitude(item.Latitude)
                         setJumpToLongitude(item.Longitude)
                     }
-                    //console.log(`Taxi Stand/Stop ${item.TaxiCode} selected`)
                 }}
             />
         )

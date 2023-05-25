@@ -1,19 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, Text, View, Alert, Image, Button, Pressable } from "react-native";
+import { StyleSheet, Text, View, Alert, Image, Pressable } from "react-native";
 
 import * as Location from "expo-location";
 import MapView, { Marker, Polygon, Polyline, Callout } from "react-native-maps";
 import { getDistance, getCenterOfBounds, isPointInPolygon } from "geolib";
 import DropDownPicker from "react-native-dropdown-picker";
 
-import taxiStandMarker from "../assets/taximarker.png";
 import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
-
-const taxiStandData = require("./TaxiStands.json");
-const taxiAvailability = require("./TaxiAvailability.json");
-const taxiCountData = require("./TaxiCount.json");
-
+import taxiStandMarker from "../assets/taximarker.png";
 const taxiStandMarkerURI = Image.resolveAssetSource(taxiStandMarker).uri
+const taxiStandData = require("./TaxiStands.json");
+const taxiCountData = require("./TaxiCount.json");
+const taxiAvailability = require("./TaxiAvailability.json");
 
 function TaxiStand({ userLocation, distance, setSelectedLocation, setShowPolyLine, setDistance }) {
     return (
@@ -120,33 +118,6 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
     //     map1.forEach(logMapElements);
     // }
 
-    useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") {
-                setErrorMsg("Permission to access location was denied");
-                return;
-            }
-            let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-        })();
-        funcGetPlanningAreaStatic(setAreaPolygonList); //Get static planning area
-        // testFunction();
-    }, []);
-
-    let text = "Detecting location...";
-    let userLocation = {
-        latitude: null,
-        longitude: null
-    }
-    if (errorMsg) {
-        text = errorMsg;
-    } else if (location) {
-        text = "Tap to view detected location."
-        userLocation.latitude = location.coords.latitude;
-        userLocation.longitude = location.coords.longitude;
-    }
-
     //Handler to display polygon for selected area
     const handlerSelectArea = (id) => {
         const foundIndex = AreaPolygonList.findIndex((item) => item.pln_area_n === id);
@@ -182,32 +153,54 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
         // })
         // console.log(taxiCount);
         // setTaxisAvailable(taxiCount);
-
     }
 
-    const mapRef = useRef(null);
+    //Detect user location
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== "granted") {
+                setErrorMsg("Permission to access location was denied");
+                return;
+            }
+            let location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+        })();
+        funcGetPlanningAreaStatic(setAreaPolygonList); //Get static planning area
+        // testFunction();
+    }, []);
 
+    //Set user location
+    let text = "Detecting location...";
+    let userLocation = {
+        latitude: null,
+        longitude: null
+    }
+    if (errorMsg) {
+        text = errorMsg;
+    } else if (location) {
+        text = "Tap to view detected location."
+        userLocation.latitude = location.coords.latitude;
+        userLocation.longitude = location.coords.longitude;
+    }
+
+    //Jump to user's current location using the top bar, or jump to a taxi stand selected from the list
+    const mapRef = useRef(null);
     const JumpToRegion = () => {
         mapRef.current.animateToRegion({
             latitude: JumpToLatitude,
             longitude: JumpToLongitude,
-            //latitude: 1.291210939,
-            //longitude: 103.8459884,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
-            //latitudeDelta: 0.002,
-            //longitudeDelta: 0.002,
         }, 1000)
     }
-
-    useEffect(() => {
-        JumpToRegion();
-    }, [JumpToLatitude, JumpToLongitude]);
-
     const JumpToCurrentLocation = () => {
         setJumpToLatitude(location.coords.latitude)
         setJumpToLongitude(location.coords.longitude)
     }
+    useEffect(() => {
+        JumpToRegion();
+    }, [JumpToLatitude, JumpToLongitude]);
 
     return (
         <View style={styles.mainContainer}>
@@ -278,15 +271,9 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
     },
-    topContainer: {
-        //height: 25,
-    },
     mapContainer: {
         flexBasis: "50%",
         flexGrow: 1,
-    },
-    bottomContainer: {
-        //height: 105,
     },
     footer: {
         backgroundColor: "#D5D8DC",
@@ -301,6 +288,5 @@ const styles = StyleSheet.create({
     },
     dropdownlabel: {
         padding: 5,
-        //fontSize: 16,
     }
 })
