@@ -1,46 +1,67 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Alert } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { StyleSheet, Text, View, Alert, Image, Pressable } from "react-native";
 
 import * as Location from "expo-location";
-import MapView, { Marker, Polygon } from "react-native-maps";
-import DropDownPicker from 'react-native-dropdown-picker';
-import { getCenterOfBounds, isPointInPolygon } from 'geolib';
+import MapView, { Marker, Polygon, Polyline, Callout } from "react-native-maps";
+import { getDistance, getCenterOfBounds, isPointInPolygon } from "geolib";
+import DropDownPicker from "react-native-dropdown-picker";
 
-import taxiStandMarker from "../assets/taximarker.png";
 import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
-
+import taxiStandMarker from "../assets/taximarker.png";
+const taxiStandMarkerURI = Image.resolveAssetSource(taxiStandMarker).uri
 const taxiStandData = require("./TaxiStands.json");
-const taxiAvailability = require("./TaxiAvailability.json");
 const taxiCountData = require("./TaxiCount.json");
+const taxiAvailability = require("./TaxiAvailability.json");
 
-function TaxiStand() {
+function TaxiStand({ userLocation, distance, setSelectedLocation, setShowPolyLine, setDistance }) {
     return (
         taxiStandData.value.map((item, index) => {
             return (
                 <Marker
                     key={index}
                     coordinate={{ latitude: item.Latitude, longitude: item.Longitude }}
-                    onPress={() => selectTaxiStand(item.TaxiCode, item.Name, item.Latitude, item.Longitude)}
-                    centerOffset={{ x: -18, y: -60 }}
-                    anchor={{ x: 0.69, y: 1 }}
-                    image={taxiStandMarker}
-                />
+                    onPress={() => selectTaxiStand(userLocation, item.TaxiCode, item.Name, item.Latitude, item.Longitude, setSelectedLocation, setShowPolyLine, setDistance)}
+                    //centerOffset={{ x: -18, y: -60 }}
+                    //anchor={{ x: 0.69, y: 1 }}
+                    image={{uri: taxiStandMarkerURI}}
+                    //image={taxiStandMarker}
+                >
+                    {distance != null &&
+                        <Callout>
+                            <View>
+                                <Text>{distance}m from me</Text>
+                            </View>
+                        </Callout>
+                    }
+                </Marker>
             )
         })
     )
 }
 
-function selectTaxiStand(taxiCode, name, latitude, longitude) {
+function selectTaxiStand(userLocation, taxiCode, name, latitude, longitude, setSelectedLocation, setShowPolyLine, setDistance) {
     Alert.alert(
         "Taxi Stand: " + taxiCode,
-        "Address: " + name
+        "Address: " + name,
+        [
+            { text: "Navigate", onPress: () => {
+                setSelectedLocation({ latitude: latitude, longitude: longitude })
+                setDistance(getDistance(userLocation, { latitude: latitude, longitude: longitude }))
+                setShowPolyLine(true)
+            }},
+            { text: "Cancel", onPress: () => setShowPolyLine(false), style: "cancel" }
+        ],
+        { cancelable: false }
     )
 }
 
-export default function MapScreen() {
+export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLatitude, setJumpToLongitude }) {
 
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [distance, setDistance] = useState(null);
+    const [showPolyLine, setShowPolyLine] = useState(false);
 
     //Set initial view
     const [center, setCenter] = useState([1.343, 103.814]);
@@ -59,10 +80,22 @@ export default function MapScreen() {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
-        { label: 'QUEENSTOWN', value: 'QUEENSTOWN' },
-        { label: 'DOWNTOWN CORE', value: 'DOWNTOWN CORE' },
-        { label: 'NEWTON', value: 'NEWTON' },
-        { label: 'ORCHARD', value: 'ORCHARD' },
+        { labelStyle: {padding: 5}, label: "DOWNTOWN CORE", value: "DOWNTOWN CORE" },
+        { labelStyle: {padding: 5}, label: "ANG MO KIO", value: "ANG MO KIO" },
+        { labelStyle: {padding: 5}, label: "BEDOK", value: "BEDOK" },
+        { labelStyle: {padding: 5}, label: "BISHAN", value: "BISHAN" },
+        { labelStyle: {padding: 5}, label: "BUKIT BATOK", value: "BUKIT BATOK" },
+        { labelStyle: {padding: 5}, label: "CHOA CHU KANG", value: "CHOA CHU KANG" },
+        { labelStyle: {padding: 5}, label: "CLEMENTI", value: "CLEMENTI" },
+        { labelStyle: {padding: 5}, label: "GEYLANG", value: "GEYLANG" },
+        { labelStyle: {padding: 5}, label: "HOUGANG", value: "HOUGANG" },
+        { labelStyle: {padding: 5}, label: "JURONG WEST", value: "JURONG WEST" },
+        { labelStyle: {padding: 5}, label: "KALLANG", value: "KALLANG" },
+        { labelStyle: {padding: 5}, label: "MARINE PARADE", value: "MARINE PARADE" },
+        { labelStyle: {padding: 5}, label: "NEWTON", value: "NEWTON" },
+        { labelStyle: {padding: 5}, label: "ORCHARD", value: "ORCHARD" },
+        { labelStyle: {padding: 5}, label: "PASIR RIS", value: "PASIR RIS" },
+        { labelStyle: {padding: 5}, label: "QUEENSTOWN", value: "QUEENSTOWN" },
     ]);
 
     //Planning area
@@ -96,35 +129,6 @@ export default function MapScreen() {
     //     })
     //     map1.forEach(logMapElements);
     // }
-
-
-    useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") {
-                setErrorMsg("Permission to access location was denied");
-                return;
-            }
-            let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-        })();
-
-        funcGetPlanningAreaStatic(setAreaPolygonList); //Get static planning area
-        // testFunction();
-    }, []);
-
-    let text = "Waiting..";
-    let userLocation = {
-        latitude: null,
-        longitude: null
-    }
-    if (errorMsg) {
-        text = errorMsg;
-    } else if (location) {
-        text = "Location detected."
-        userLocation.latitude = location.coords.latitude;
-        userLocation.longitude = location.coords.longitude;
-    }
 
     //Handler to display polygon for selected area
     const handlerSelectArea = (id) => {
@@ -161,74 +165,140 @@ export default function MapScreen() {
         // })
         // console.log(taxiCount);
         // setTaxisAvailable(taxiCount);
-
     }
 
-    return (
-        <View style={styles.container}>
-            <MapView
-                style={styles.map}
-                showsUserLocation={true}
-                followsUserLocation={true}
-                zoomTapEnabled={true}
-                initialCamera={camera}
-            >
-                <TaxiStand />
-                <Polygon
-                    coordinates={polygon}
-                    strokeColor="#F00"
-                    fillColor="rgba(255,0,0,0.1)"
-                    strokeWidth={1}
-                />
+    //Detect user location
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== "granted") {
+                setErrorMsg("Permission to access location was denied");
+                return;
+            }
+            let location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+        })();
+        funcGetPlanningAreaStatic(setAreaPolygonList); //Get static planning area
+        // testFunction();
+    }, []);
 
-            </MapView>
-            <DropDownPicker
-                containerStyle={styles.dropdown}
-                labelStyle={styles.dropdownlabel}
-                open={open}
-                value={value}
-                items={items}
-                setOpen={setOpen}
-                setValue={setValue}
-                setItems={setItems}
-                onChangeValue={(value) => {
-                    handlerSelectArea(value);
-                }}
-            />
-            <Text>Taxis available in area: {taxisAvailable}</Text>
-            <Text style={styles.footer}>{text}</Text>
+    //Set user location
+    let text = "Detecting location...";
+    let userLocation = {
+        latitude: null,
+        longitude: null
+    }
+    if (errorMsg) {
+        text = errorMsg;
+    } else if (location) {
+        text = "Tap to view detected location."
+        userLocation.latitude = location.coords.latitude;
+        userLocation.longitude = location.coords.longitude;
+    }
+
+    //Jump to user's current location using the top bar, or jump to a taxi stand selected from the list
+    const mapRef = useRef(null);
+    const JumpToRegion = () => {
+        mapRef.current.animateToRegion({
+            latitude: JumpToLatitude,
+            longitude: JumpToLongitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+        }, 1000)
+    }
+    const JumpToCurrentLocation = () => {
+        setJumpToLatitude(location.coords.latitude)
+        setJumpToLongitude(location.coords.longitude)
+    }
+    useEffect(() => {
+        JumpToRegion();
+    }, [JumpToLatitude, JumpToLongitude]);
+
+    return (
+        <View style={styles.mainContainer}>
+            <View style={styles.topContainer}>
+                <Pressable onPress={JumpToCurrentLocation}>
+                    <Text style={styles.footer}>{text}{distance != null && " Selected location is " + `${distance}` + "m away."}</Text>
+                </Pressable>
+            </View>
+            <View style={styles.mapContainer}>
+                <MapView
+                    ref={mapRef}
+                    style={styles.map}
+                    showsUserLocation={true}
+                    zoomTapEnabled={true}
+                    initialCamera={camera}
+                >
+                    <Polygon
+                        coordinates={polygon}
+                        strokeColor="#F00"
+                        fillColor="rgba(255,0,0,0.1)"
+                        strokeWidth={1}
+                    />
+                    <TaxiStand
+                        userLocation={userLocation}
+                        distance={distance}
+                        setSelectedLocation={setSelectedLocation}
+                        setShowPolyLine={setShowPolyLine}
+                        setDistance={setDistance}
+                    />
+                    {showPolyLine && <Polyline
+                        coordinates={[ userLocation, selectedLocation ]}
+                        strokeColor="#717D7E"
+                        fillColor="#717D7E"
+                        strokeWidth={6}
+                    />}
+                </MapView>
+            </View>
+            <View style={styles.bottomContainer}>
+                <DropDownPicker
+                    containerStyle={styles.dropdown}
+                    labelStyle={styles.dropdownlabel}
+                    placeholderStyle={styles.dropdownlabel}
+                    placeholder="Select a region"
+                    dropDownContainerStyle={{marginBottom: 18}}
+                    open={open}
+                    value={value}
+                    items={items}
+                    setOpen={setOpen}
+                    setValue={setValue}
+                    setItems={setItems}
+                    onChangeValue={(value) => {
+                        handlerSelectArea(value);
+                    }}
+                />
+                <Text style={styles.footer}>Taxis available in this region: {taxisAvailable}</Text>
+            </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: "#fff",
+    mainContainer: {
+        backgroundColor: "white",
+        flex: 1,
+        justifyContent: "space-between",
     },
     map: {
-        width: "95%",
-        height: "80%",
-        marginHorizontal: "2.5%",
-        marginTop: "2.5%",
+        width: "100%",
+        height: "100%",
+    },
+    mapContainer: {
+        flexBasis: "50%",
+        flexGrow: 1,
     },
     footer: {
-        alignItems: "stretch",
-        color: "#2E4053",
         backgroundColor: "#D5D8DC",
+        color: "#2E4053",
         textAlign: "center",
         fontSize: 12,
         padding: 5,
-        margin: 10,
     },
     dropdown: {
-        width: "95%",
         alignItems: "center",
-        marginHorizontal: "2.5%",
-        marginTop: "2.5%",
+        padding: 15,
     },
     dropdownlabel: {
-        width: "95%",
-        alignItems: "center",
-
+        padding: 5,
     }
 })

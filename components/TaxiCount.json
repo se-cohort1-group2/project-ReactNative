@@ -1,21 +1,5 @@
 [
     {
-        "area": "QUEENSTOWN",
-        "taxiCount": 28
-    },
-    {
-        "area": "DOWNTOWN CORE",
-        "taxiCount": 61
-    },
-    {
-        "area": "ORCHARD",
-        "taxiCount": 15
-    },
-    {
-        "area": "NEWTON",
-        "taxiCount": 10
-    },
-    {
         "area": "ANG MO KIO",
         "taxiCount": 46
     },
@@ -26,6 +10,161 @@
     {
         "area": "BISHAN",
         "taxiCount": 20
+    },
+    {
+        "area": "BOON LAY",
+        "taxiCount": 2
+    },
+    {
+        "area": "BUKIT BATOK",
+        "taxiCount": 45
+    },
+    {
+        "area": "BUKIT MERAH",
+        "taxiCount": 0
+    },
+    {
+        "area": "BUKIT PANJANG",
+        "taxiCount": 19
+    },
+    {
+        "area": "BUKIT TIMAH",
+        "taxiCount": 14
+    },
+    {
+        "area": "CENTRAL WATER CATCHMENT",
+        "taxiCount": 6
+    },
+    {
+        "area": "CHANGI",
+        "taxiCount": 0
+    },
+    {
+        "area": "CHANGI BAY",
+        "taxiCount": 0
+    },
+    {
+        "area": "CHOA CHU KANG",
+        "taxiCount": 30
+    },
+    {
+        "area": "CLEMENTI",
+        "taxiCount": 23
+    },
+    {
+        "area": "DOWNTOWN CORE",
+        "taxiCount": 61
+    },
+    {
+        "area": "GEYLANG",
+        "taxiCount": 43
+    },
+    {
+        "area": "HOUGANG",
+        "taxiCount": 58
+    },
+    {
+        "area": "JURONG EAST",
+        "taxiCount": 0
+    },
+    {
+        "area": "JURONG WEST",
+        "taxiCount": 43
+    },
+    {
+        "area": "KALLANG",
+        "taxiCount": 54
+    },
+    {
+        "area": "LIM CHU KANG",
+        "taxiCount": 0
+    },
+    {
+        "area": "MANDAI",
+        "taxiCount": 4
+    },
+    {
+        "area": "MARINA EAST",
+        "taxiCount": 0
+    },
+    {
+        "area": "MARINA SOUTH",
+        "taxiCount": 4
+    },
+    {
+        "area": "MARINE PARADE",
+        "taxiCount": 7
+    },
+    {
+        "area": "MUSEUM",
+        "taxiCount": 6
+    },
+    {
+        "area": "NEWTON",
+        "taxiCount": 10
+    },
+    {
+        "area": "NORTH-EASTERN ISLANDS",
+        "taxiCount": 0
+    },
+    {
+        "area": "NOVENA",
+        "taxiCount": 22
+    },
+    {
+        "area": "ORCHARD",
+        "taxiCount": 15
+    },
+    {
+        "area": "OUTRAM",
+        "taxiCount": 19
+    },
+    {
+        "area": "PASIR RIS",
+        "taxiCount": 47
+    },
+    {
+        "area": "PAYA LEBAR",
+        "taxiCount": 12
+    },
+    {
+        "area": "PIONEER",
+        "taxiCount": 4
+    },
+    {
+        "area": "PUNGGOL",
+        "taxiCount": 0
+    },
+    {
+        "area": "QUEENSTOWN",
+        "taxiCount": 28
+    },
+    {
+        "area": "RIVER VALLEY",
+        "taxiCount": 7
+    },
+    {
+        "area": "ROCHOR",
+        "taxiCount": 17
+    },
+    {
+        "area": "SELETAR",
+        "taxiCount": 3
+    },
+    {
+        "area": "SEMBAWANG",
+        "taxiCount": 0
+    },
+    {
+        "area": "SENGKANG",
+        "taxiCount": 56
+    },
+    {
+        "area": "SERANGOON",
+        "taxiCount": 32
+    },
+    {
+        "area": "SIMPANG",
+        "taxiCount": 0
     }
 ]
-
