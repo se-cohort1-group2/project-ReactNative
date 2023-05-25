@@ -166,5 +166,57 @@
     {
         "area": "SIMPANG",
         "taxiCount": 0
+    },
+    {
+        "area": "SINGAPORE RIVER",
+        "taxiCount": 0
+    },
+    {
+        "area": "SOUTHERN ISLANDS",
+        "taxiCount": 0
+    },
+    {
+        "area": "STRAITS VIEW",
+        "taxiCount": 0
+    },
+    {
+        "area": "SUNGEI KADUT",
+        "taxiCount": 0
+    },
+    {
+        "area": "TAMPINES",
+        "taxiCount": 0
+    },
+    {
+        "area": "TANGLIN",
+        "taxiCount": 0
+    },
+    {
+        "area": "TENGAH",
+        "taxiCount": 0
+    },
+    {
+        "area": "TOA PAYOH",
+        "taxiCount": 0
+    },
+    {
+        "area": "TUAS",
+        "taxiCount": 0
+    },
+    {
+        "area": "WESTERN ISLANDS",
+        "taxiCount": 0
+    },
+    {
+        "area": "WESTERN WATER CATCHMENT",
+        "taxiCount": 0
+    },
+    {
+        "area": "WOODLANDS",
+        "taxiCount": 0
+    },
+    {
+        "area": "YISHUN",
+        "taxiCount": 0
     }
 ]
