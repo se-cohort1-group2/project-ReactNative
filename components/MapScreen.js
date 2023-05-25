@@ -9,55 +9,124 @@ import DropDownPicker from "react-native-dropdown-picker";
 import taxiStandMarker from "../assets/taximarker.png";
 import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
 
+import TaxiStand from "./TaxiStand";
+import funcSelectTaxiStand from "./funcSelectTaxiStand";
+
 const taxiStandData = require("./TaxiStands.json");
 const taxiAvailability = require("./TaxiAvailability.json");
 
-function TaxiStand({ userLocation, distance, setSelectedLocation, setShowPolyLine, setDistance }) {
-    return (
-        taxiStandData.value.map((item, index) => {
-            return (
-                <Marker
-                    key={index}
-                    coordinate={{ latitude: item.Latitude, longitude: item.Longitude }}
-                    onPress={() => selectTaxiStand(userLocation, item.TaxiCode, item.Name, item.Latitude, item.Longitude, setSelectedLocation, setShowPolyLine, setDistance)}
-                    centerOffset={{ x: -18, y: -60 }}
-                    anchor={{ x: 0.69, y: 1 }}
-                    image={taxiStandMarker}
-                >
-                    {distance != null &&
-                        <Callout>
-                            <View>
-                                <Text>{distance}m from me</Text>
-                            </View>
-                        </Callout>
-                    }
-                </Marker>
-            )
-        })
-    )
-}
+// function TaxiStand({userLocation, selectedLocations, setSelectedLocations}){
 
-function selectTaxiStand(userLocation, taxiCode, name, latitude, longitude, setSelectedLocation, setShowPolyLine, setDistance) {
-    Alert.alert(
-        "Taxi Stand: " + taxiCode,
-        "Address: " + name,
-        [
-            { text: "Navigate", onPress: () => {
-                setSelectedLocation({ latitude: latitude, longitude: longitude })
-                setDistance(getDistance(userLocation, { latitude: latitude, longitude: longitude }))
-                setShowPolyLine(true)
-            }},
-            { text: "Cancel", onPress: () => setShowPolyLine(false), style: "cancel" }
-        ],
-        { cancelable: false }
-    )
+//   function removeSelectedLocation({item}){
+//     let newLocations = new Set();
+
+//     selectedLocations.forEach(element => {
+//       if (element.TaxiCode === item.TaxiCode){
+//         return false;
+//       }
+
+//       newLocations.add(element);
+
+//     });
+
+//     setSelectedLocations(newLocations);
+//   }
+
+//   function selectTaxiStand({item}){
+//     Alert.alert('Taxi Stand: ' + item.TaxiCode,
+//     'Address: '+ item.Name, [
+//       { text: 'Add', onPress: () => {
+//         item.Distance = getDistance(userLocation,{latitude: item.Latitude,longitude: item.Longitude});
+
+//         setSelectedLocations(selectedLocations => new Set(selectedLocations).add(item));
+//           console.log(selectedLocations);
+//       } },
+//       {
+//         text: 'Remove', onPress: () => {
+//           removeSelectedLocation({item});
+//         }
+//       },
+//       {
+//         text: 'Cancel',
+//         onPress: () => console.log('Pressed cancelled'),
+//         style: 'cancel',
+//       },
+//     ],
+//     { cancelable: true });
+//   }
+
+//   return(
+//       taxiStandData.value.map((item, index) => {
+        
+//       return(
+//         <Marker 
+//         key= {index}
+//         coordinate={{latitude: item.Latitude, longitude: item.Longitude}}
+//         onPress={()=> selectTaxiStand({item})}
+//         centerOffset={{x: -18, y: -60}}
+//         anchor={{x: 0.69, y: 1}}
+//         image={taxiStandMarker}>
+//             {item.Distance != null && <Callout>
+//               <View>
+//                 <Text>{item.Distance}km from me</Text>
+//               </View>
+//             </Callout>}
+//         </Marker>
+//       )
+//     })
+//   )
+// }
+
+// function SelectedTaxiStands({userLocation, selectedLocations, setSelectedLocations}){
+//   return (
+//     selectedLocations.forEach(item => {
+//       console.log(selectedLocations.size);
+//         <Marker 
+//           key={"key_"+`${item.Longitude}`+`${item.Latitude}`}
+//           coordinate={{latitude: item.Latitude, longitude: item.Longitude}}
+//           onPress={()=> funcSelectTaxiStand({item, userLocation, selectedLocations, setSelectedLocations})}
+//           // centerOffset={{x: -18, y: -60}}
+//           // anchor={{x: 0.69, y: 1}}
+//           pinColor="#F00">
+//               {item.Distance != null && <Callout>
+//                 <View>
+//                   <Text>{item.Distance}km from me</Text>
+//                 </View>
+//               </Callout>}
+//         </Marker>
+//     }
+    // selectedLocations.map((item, index) => {
+
+    //   return (
+    //     <Marker 
+    //       key= {index}
+    //       coordinate={{latitude: item.Latitude, longitude: item.Longitude}}
+    //       onPress={()=> funcSelectTaxiStand({item, userLocation, selectedLocations, setSelectedLocations})}
+    //       centerOffset={{x: -18, y: -60}}
+    //       anchor={{x: 0.69, y: 1}}>
+    //           {item.Distance != null && <Callout>
+    //             <View>
+    //               <Text>{item.Distance}km from me</Text>
+    //             </View>
+    //           </Callout>}
+    //     </Marker>
+    //   )
+    // })
+//   ))
+// }
+
+const funcGetLastItem = (setOfItems) => {
+  const item = [...setOfItems].pop();
+  console.log(item);
+  const position = {latitude: item.Latitude, longitude: item.Longitude}
+  return position;
 }
 
 export default function MapScreen() {
 
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
-    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [selectedLocations, setSelectedLocations] = useState(new Set());
     const [distance, setDistance] = useState(null);
     const [showPolyLine, setShowPolyLine] = useState(false);
 
@@ -170,15 +239,28 @@ export default function MapScreen() {
                         fillColor="rgba(255,0,0,0.1)"
                         strokeWidth={1}
                     />
-                    <TaxiStand
+                    {/* {selectedLocations.size > 0 && <SelectedTaxiStands
+                      userLocation={userLocation}
+                      selectedLocations={selectedLocations}
+                      setSelectedLocations={setSelectedLocations}/>} */}
+                    <TaxiStand 
+                        userLocation={userLocation}
+                        selectedLocations={selectedLocations}
+                        setSelectedLocations={setSelectedLocations}/>
+                    {selectedLocations.size >0  && <Polyline
+                      coordinates={[userLocation,funcGetLastItem(selectedLocations)]}
+                      strokeColor="#717D7E"
+                      fillColor="#717D7E"
+                      strokeWidth={6}/>}
+                    {/* <TaxiStand
                         userLocation={userLocation}
                         distance={distance}
                         setSelectedLocation={setSelectedLocation}
                         setShowPolyLine={setShowPolyLine}
                         setDistance={setDistance}
-                    />
+                    /> */}
                     {showPolyLine && <Polyline
-                        coordinates={[ userLocation, selectedLocation ]}
+                        coordinates={[ userLocation, selectedLocations ]}
                         strokeColor="#717D7E"
                         fillColor="#717D7E"
                         strokeWidth={6}
