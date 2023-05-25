@@ -25,7 +25,8 @@ export default function funcSelectTaxiStand({item, userLocation, selectedLocatio
         item.Distance = getDistance(userLocation,{latitude: item.Latitude,longitude: item.Longitude});
 
         setSelectedLocations(selectedLocations => new Set(selectedLocations).add(item));
-        } },
+        // console.log(selectedLocations)
+      }},
         {
         text: 'Remove', onPress: () => {
             removeSelectedLocation({item});

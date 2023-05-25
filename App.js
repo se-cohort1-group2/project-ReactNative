@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
@@ -7,10 +8,14 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import MapScreen from "./components/MapScreen";
 import TaxiStandsScreen from "./components/TaxiStandsScreen";
+import SelectionListScreen from "./components/SelectionListScreen";
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+
+    const [selectedLocations, setSelectedLocations] = useState(new Set());
+
     return (
         <NavigationContainer>
             <Tab.Navigator
@@ -28,8 +33,11 @@ export default function App() {
                     tabBarInactiveTintColor: "gray",
                 })}
             >
-                <Tab.Screen name="Map" component={MapScreen}/>
+                {/* <Tab.Screen name="Map" component={MapScreen}/> */}
+                <Tab.Screen name="Map" children={props => <MapScreen {...props} selectedLocations={selectedLocations} setSelectedLocations={setSelectedLocations}/>}/>
+                <Tab.Screen name="Selected" children={props => <SelectionListScreen {...props} selectedLocations={selectedLocations}/>}/>
                 <Tab.Screen name="Taxi Stands" component={TaxiStandsScreen}/>
+                
             </Tab.Navigator>
         </NavigationContainer>
     )

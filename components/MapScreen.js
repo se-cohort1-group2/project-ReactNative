@@ -10,110 +10,10 @@ import taxiStandMarker from "../assets/taximarker.png";
 import funcGetPlanningAreaStatic from "./funcGetPlanningAreaStatic";
 
 import TaxiStand from "./TaxiStand";
-import funcSelectTaxiStand from "./funcSelectTaxiStand";
 
 const taxiStandData = require("./TaxiStands.json");
 const taxiAvailability = require("./TaxiAvailability.json");
 
-// function TaxiStand({userLocation, selectedLocations, setSelectedLocations}){
-
-//   function removeSelectedLocation({item}){
-//     let newLocations = new Set();
-
-//     selectedLocations.forEach(element => {
-//       if (element.TaxiCode === item.TaxiCode){
-//         return false;
-//       }
-
-//       newLocations.add(element);
-
-//     });
-
-//     setSelectedLocations(newLocations);
-//   }
-
-//   function selectTaxiStand({item}){
-//     Alert.alert('Taxi Stand: ' + item.TaxiCode,
-//     'Address: '+ item.Name, [
-//       { text: 'Add', onPress: () => {
-//         item.Distance = getDistance(userLocation,{latitude: item.Latitude,longitude: item.Longitude});
-
-//         setSelectedLocations(selectedLocations => new Set(selectedLocations).add(item));
-//           console.log(selectedLocations);
-//       } },
-//       {
-//         text: 'Remove', onPress: () => {
-//           removeSelectedLocation({item});
-//         }
-//       },
-//       {
-//         text: 'Cancel',
-//         onPress: () => console.log('Pressed cancelled'),
-//         style: 'cancel',
-//       },
-//     ],
-//     { cancelable: true });
-//   }
-
-//   return(
-//       taxiStandData.value.map((item, index) => {
-        
-//       return(
-//         <Marker 
-//         key= {index}
-//         coordinate={{latitude: item.Latitude, longitude: item.Longitude}}
-//         onPress={()=> selectTaxiStand({item})}
-//         centerOffset={{x: -18, y: -60}}
-//         anchor={{x: 0.69, y: 1}}
-//         image={taxiStandMarker}>
-//             {item.Distance != null && <Callout>
-//               <View>
-//                 <Text>{item.Distance}km from me</Text>
-//               </View>
-//             </Callout>}
-//         </Marker>
-//       )
-//     })
-//   )
-// }
-
-// function SelectedTaxiStands({userLocation, selectedLocations, setSelectedLocations}){
-//   return (
-//     selectedLocations.forEach(item => {
-//       console.log(selectedLocations.size);
-//         <Marker 
-//           key={"key_"+`${item.Longitude}`+`${item.Latitude}`}
-//           coordinate={{latitude: item.Latitude, longitude: item.Longitude}}
-//           onPress={()=> funcSelectTaxiStand({item, userLocation, selectedLocations, setSelectedLocations})}
-//           // centerOffset={{x: -18, y: -60}}
-//           // anchor={{x: 0.69, y: 1}}
-//           pinColor="#F00">
-//               {item.Distance != null && <Callout>
-//                 <View>
-//                   <Text>{item.Distance}km from me</Text>
-//                 </View>
-//               </Callout>}
-//         </Marker>
-//     }
-    // selectedLocations.map((item, index) => {
-
-    //   return (
-    //     <Marker 
-    //       key= {index}
-    //       coordinate={{latitude: item.Latitude, longitude: item.Longitude}}
-    //       onPress={()=> funcSelectTaxiStand({item, userLocation, selectedLocations, setSelectedLocations})}
-    //       centerOffset={{x: -18, y: -60}}
-    //       anchor={{x: 0.69, y: 1}}>
-    //           {item.Distance != null && <Callout>
-    //             <View>
-    //               <Text>{item.Distance}km from me</Text>
-    //             </View>
-    //           </Callout>}
-    //     </Marker>
-    //   )
-    // })
-//   ))
-// }
 
 const funcGetLastItem = (setOfItems) => {
   const item = [...setOfItems].pop();
@@ -122,13 +22,11 @@ const funcGetLastItem = (setOfItems) => {
   return position;
 }
 
-export default function MapScreen() {
+export default function MapScreen({selectedLocations, setSelectedLocations}) {
 
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
-    const [selectedLocations, setSelectedLocations] = useState(new Set());
-    const [distance, setDistance] = useState(null);
-    const [showPolyLine, setShowPolyLine] = useState(false);
+    // const [selectedLocations, setSelectedLocations] = useState(new Set());
 
     //Set initial view
     const [center, setCenter] = useState([1.343, 103.814]);
@@ -224,7 +122,7 @@ export default function MapScreen() {
     return (
         <View style={styles.mainContainer}>
             <View style={styles.topContainer}>
-                <Text style={styles.footer}>{text}{distance != null && " Selected location is " + `${distance}` + "m away."}</Text>
+                <Text style={styles.footer}>{text}</Text>
             </View>
             <View style={styles.mapContainer}>
                 <MapView
@@ -239,10 +137,6 @@ export default function MapScreen() {
                         fillColor="rgba(255,0,0,0.1)"
                         strokeWidth={1}
                     />
-                    {/* {selectedLocations.size > 0 && <SelectedTaxiStands
-                      userLocation={userLocation}
-                      selectedLocations={selectedLocations}
-                      setSelectedLocations={setSelectedLocations}/>} */}
                     <TaxiStand 
                         userLocation={userLocation}
                         selectedLocations={selectedLocations}
@@ -252,19 +146,6 @@ export default function MapScreen() {
                       strokeColor="#717D7E"
                       fillColor="#717D7E"
                       strokeWidth={6}/>}
-                    {/* <TaxiStand
-                        userLocation={userLocation}
-                        distance={distance}
-                        setSelectedLocation={setSelectedLocation}
-                        setShowPolyLine={setShowPolyLine}
-                        setDistance={setDistance}
-                    /> */}
-                    {showPolyLine && <Polyline
-                        coordinates={[ userLocation, selectedLocations ]}
-                        strokeColor="#717D7E"
-                        fillColor="#717D7E"
-                        strokeWidth={6}
-                    />}
                 </MapView>
             </View>
             <View style={styles.bottomContainer}>
