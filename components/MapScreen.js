@@ -7,13 +7,50 @@ import * as Location from 'expo-location';
 
 import taxiStandMarker from '../assets/taximarker.png'
 
-const taxiStandData = require('../TaxiStands.json');
+const taxiStandData = require('./TaxiStands.json');
 
 
 
-function TaxiStand({userLocation, distance, setSelectedLocation, setShowPolyLine, setDistance}){
+function TaxiStand({userLocation, selectedLocations, setSelectedLocations}){
 
-  
+  function removeSelectedLocation({item}){
+    let newLocations = new Set();
+
+    selectedLocations.forEach(element => {
+      if (element.TaxiCode === item.TaxiCode){
+        return false;
+      }
+
+      newLocations.add(element);
+
+    });
+
+    setSelectedLocations(newLocations);
+  }
+
+  function selectTaxiStand({item}){
+    Alert.alert('Taxi Stand: ' + item.TaxiCode,
+    'Address: '+ item.Name, [
+      { text: 'Add', onPress: () => {
+        item.Distance = getDistance(userLocation,{latitude: item.Latitude,longitude: item.Longitude});
+
+        setSelectedLocations(selectedLocations => new Set(selectedLocations).add(item));
+          console.log(selectedLocations);
+      } },
+      {
+        text: 'Remove', onPress: () => {
+          removeSelectedLocation({item});
+        }
+      },
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Pressed cancelled'),
+        style: 'cancel',
+      },
+    ],
+    { cancelable: true });
+  }
+
   return(
       taxiStandData.value.map((item, index) => {
         
@@ -21,49 +58,37 @@ function TaxiStand({userLocation, distance, setSelectedLocation, setShowPolyLine
         <Marker 
         key= {index}
         coordinate={{latitude: item.Latitude, longitude: item.Longitude}}
-        onPress={()=> selectTaxiStand(userLocation, item.TaxiCode, item.Name, item.Latitude, item.Longitude, setSelectedLocation, setShowPolyLine, setDistance)}
+        onPress={()=> selectTaxiStand({item})}
         centerOffset={{x: -18, y: -60}}
         anchor={{x: 0.69, y: 1}}
         image={taxiStandMarker}>
-          {distance != null && 
-            <Callout>
+            {item.Distance != null && <Callout>
               <View>
-                <Text>{distance}km from me</Text>
+                <Text>{item.Distance}km from me</Text>
               </View>
-            </Callout>
-          }
+            </Callout>}
         </Marker>
       )
     })
   )
 }
 
-function selectTaxiStand(userLocation, taxiCode, name, latitude,longitude, setSelectedLocation, setShowPolyLine, setDistance){
-  Alert.alert('Taxi Stand: ' + taxiCode,
-  'Address: '+ name, [
-    { text: 'Navigate', onPress: () => {
-        setSelectedLocation({
-        latitude: latitude,
-        longitude: longitude
-        });
-        setDistance(getDistance(userLocation,{latitude: latitude,longitude: longitude}));
-        setShowPolyLine(true);
-    } },
-    {
-      text: 'Cancel',
-      onPress: () => setShowPolyLine(false),
-      style: 'cancel',
-    },
-  ],
-  { cancelable: false });
-}
 
+// function findDistance(userLocation){
+//   return (
+//     taxiStandData.value.map((item, index) => {
+//       return(
+//         item.distance = getDistance(userLocation, {latitude: item.Latitude, longitude: item.Longitude})
+//       )
+//     })
+//   )
+// }
 
 export default function MapScreen() {
 
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedLocations, setSelectedLocations] = useState(new Set());
   const [distance, setDistance] = useState(null);
   const [showPolyLine, setShowPolyLine] = useState(false);
 
@@ -103,21 +128,18 @@ export default function MapScreen() {
             
             <TaxiStand 
               userLocation={userLocation}
-              distance={distance}
-              setSelectedLocation={setSelectedLocation} 
-              setShowPolyLine={setShowPolyLine}
-              setDistance={setDistance}/>
-            {showPolyLine && <Polyline
+              selectedLocations={selectedLocations}
+              setSelectedLocations={setSelectedLocations}/>
+            {/* {showPolyLine && <Polyline
               coordinates={[userLocation,selectedLocation]}
               strokeColor="#717D7E"
               fillColor="#717D7E"
               strokeWidth={6}
-              />}
+              />} */}
 
         </MapView>
-        {/* {showPolyLine && <Text style={{fontSize:6}}>Hello</Text>} */}
 
-        <Text style={styles.footer}>{text}{distance != null && " Selected location is "+`${distance}`+"km away"}</Text>
+        <Text style={styles.footer}>{text}</Text>
       
     </View>
   );
