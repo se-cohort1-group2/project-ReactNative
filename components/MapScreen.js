@@ -18,11 +18,10 @@ const funcGetLastItem = (setOfItems) => {
     return position;
 }
 
-export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLatitude, setJumpToLongitude }) {
+export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLatitude, setJumpToLongitude, selectedLocations, setSelectedLocations }) {
 
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
-    const [selectedLocations, setSelectedLocations] = useState(new Set());
     const [distance, setDistance] = useState(null);
     const [showPolyLine, setShowPolyLine] = useState(false);
 
