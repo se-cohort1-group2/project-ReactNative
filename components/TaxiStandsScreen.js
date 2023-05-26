@@ -8,10 +8,14 @@ import TaxiStandsList from "./TaxiStands.json";
 export default function TaxiStandsScreen({ navigation, setJumpToLatitude, setJumpToLongitude }) {
 
     const GoToMap = () => {
+        setJumpToLatitude(SelectedLatitude)
+        setJumpToLongitude(SelectedLongitude)
         navigation.navigate("Map")
     }
 
     const [SelectedItem, setSelectedItem] = useState(null);
+    const [SelectedLatitude, setSelectedLatitude] = useState(null);
+    const [SelectedLongitude, setSelectedLongitude] = useState(null);
 
     const Item = ({item, onPress, backgroundColor, textColor}) => (
         <View style={[styles.itemOuter, {backgroundColor}]}>
@@ -61,8 +65,8 @@ export default function TaxiStandsScreen({ navigation, setJumpToLatitude, setJum
                         setSelectedItem(null)
                     } else {
                         setSelectedItem(item.TaxiCode)
-                        setJumpToLatitude(item.Latitude)
-                        setJumpToLongitude(item.Longitude)
+                        setSelectedLatitude(item.Latitude)
+                        setSelectedLongitude(item.Longitude)
                     }
                 }}
             />

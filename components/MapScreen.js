@@ -34,22 +34,35 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
-        { labelStyle: {padding: 5}, label: "DOWNTOWN CORE", value: "DOWNTOWN CORE" },
-        { labelStyle: {padding: 5}, label: "NEWTON", value: "NEWTON" },
-        { labelStyle: {padding: 5}, label: "ORCHARD", value: "ORCHARD" },
-        { labelStyle: {padding: 5}, label: "PASIR RIS", value: "PASIR RIS" },
-        { labelStyle: {padding: 5}, label: "QUEENSTOWN", value: "QUEENSTOWN" },
-        { labelStyle: {padding: 5}, label: "ANG MO KIO", value: "ANG MO KIO" },
-        { labelStyle: {padding: 5}, label: "BEDOK", value: "BEDOK" },
-        { labelStyle: {padding: 5}, label: "BISHAN", value: "BISHAN" },
-        { labelStyle: {padding: 5}, label: "BUKIT BATOK", value: "BUKIT BATOK" },
-        { labelStyle: {padding: 5}, label: "CHOA CHU KANG", value: "CHOA CHU KANG" },
-        { labelStyle: {padding: 5}, label: "CLEMENTI", value: "CLEMENTI" },
-        { labelStyle: {padding: 5}, label: "GEYLANG", value: "GEYLANG" },
-        { labelStyle: {padding: 5}, label: "HOUGANG", value: "HOUGANG" },
-        { labelStyle: {padding: 5}, label: "JURONG WEST", value: "JURONG WEST" },
-        { labelStyle: {padding: 5}, label: "KALLANG", value: "KALLANG" },
-        { labelStyle: {padding: 5}, label: "MARINE PARADE", value: "MARINE PARADE" },
+        { disabled: true, label: "Central Region", value: "central" },
+        { parent: "central", label: "GEYLANG", value: "GEYLANG" },
+        { parent: "central", label: "KALLANG", value: "KALLANG" },
+        { parent: "central", label: "ROCHOR", value: "ROCHOR" },
+        { parent: "central", label: "NEWTON", value: "NEWTON" },
+        { parent: "central", label: "ORCHARD", value: "ORCHARD" },
+        { parent: "central", label: "DOWNTOWN CORE", value: "DOWNTOWN CORE" },
+
+        { disabled: true, label: "East Region", value: "east" },
+        { parent: "east", label: "PASIR RIS", value: "PASIR RIS" },
+        { parent: "east", label: "TAMPINES", value: "TAMPINES" },
+        { parent: "east", label: "BEDOK", value: "BEDOK" },
+
+        { disabled: true, label: "North-East Region", value: "northeast" },
+        { parent: "northeast", label: "ANG MO KIO", value: "ANG MO KIO" },
+        { parent: "northeast", label: "SERANGOON", value: "SERANGOON" },
+        { parent: "northeast", label: "HOUGANG", value: "HOUGANG" },
+        { parent: "northeast", label: "SENGKANG", value: "SENGKANG" },
+
+        { disabled: true, label: "North Region", value: "north" },
+        { parent: "north", label: "WOODLANDS", value: "WOODLANDS" },
+        { parent: "north", label: "YISHUN", value: "YISHUN" },
+
+        { disabled: true, label: "West Region", value: "west" },
+        { parent: "west", label: "JURONG WEST", value: "JURONG WEST" },
+        { parent: "west", label: "CLEMENTI", value: "CLEMENTI" },
+        { parent: "west", label: "BUKIT BATOK", value: "BUKIT BATOK" },
+        { parent: "west", label: "BUKIT PANJANG", value: "BUKIT PANJANG" },
+        { parent: "west", label: "CHOA CHU KANG", value: "CHOA CHU KANG" },
     ]);
 
     //Planning area
@@ -101,8 +114,8 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
         })
         setPolygon(swapCoord[0][0][0][0]);
         //console.log(getCenterOfBounds(swapCoord[0][0][0][0]));
-        setJumpToLatitude(getCenterOfBounds(swapCoord[0][0][0][0]).latitude)
-        setJumpToLongitude(getCenterOfBounds(swapCoord[0][0][0][0]).longitude)
+        setZoomToLatitude(getCenterOfBounds(swapCoord[0][0][0][0]).latitude)
+        setZoomToLongitude(getCenterOfBounds(swapCoord[0][0][0][0]).longitude)
 
         //get taxi count from json
         let taxiCount = 0;
@@ -155,12 +168,12 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
 
     //Jump to user's current location using the top bar, or jump to a taxi stand selected from the list
     const mapRef = useRef(null);
-    const JumpToRegion = () => {
+    const JumpToTaxiStand = () => {
         mapRef.current.animateToRegion({
             latitude: JumpToLatitude,
             longitude: JumpToLongitude,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
+            latitudeDelta: 0.001,
+            longitudeDelta: 0.001,
         }, 1000)
     }
     const JumpToCurrentLocation = () => {
@@ -168,8 +181,23 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
         setJumpToLongitude(location.coords.longitude)
     }
     useEffect(() => {
-        JumpToRegion();
+        JumpToTaxiStand();
     }, [JumpToLatitude, JumpToLongitude]);
+
+    //Zoom to region in dropdown menu
+    const [ZoomToLatitude, setZoomToLatitude] = useState(1.291210939);
+    const [ZoomToLongitude, setZoomToLongitude] = useState(103.8459884);
+    const ZoomToPlanningArea = () => {
+        mapRef.current.animateToRegion({
+            latitude: ZoomToLatitude,
+            longitude: ZoomToLongitude,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+        }, 1000)
+    }
+    useEffect(() => {
+        ZoomToPlanningArea();
+    }, [ZoomToLatitude, ZoomToLongitude]);
 
     return (
         <View style={styles.mainContainer}>
@@ -219,8 +247,9 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
                 <DropDownPicker
                     containerStyle={styles.dropdown}
                     labelStyle={styles.dropdownlabel}
+                    listItemLabelStyle={styles.dropdownlabel}
                     placeholderStyle={styles.dropdownlabel}
-                    placeholder="Select a region"
+                    placeholder="Select an area to view"
                     dropDownContainerStyle={{ marginBottom: 22 }}
                     open={open}
                     value={value}
@@ -232,7 +261,7 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
                         handlerSelectArea(value);
                     }}
                 />
-                <Text style={styles.footer}>Taxis available in this region: {taxisAvailable}</Text>
+                <Text style={styles.footer}>Taxis available in this area: {taxisAvailable}</Text>
             </View>
         </View>
     )
