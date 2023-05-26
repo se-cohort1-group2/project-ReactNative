@@ -19,14 +19,13 @@ export default function SelectionListScreen({ selectedLocations, setSelectedLoca
             newLocations.add(element);
         })
         setSelectedLocations(newLocations);
-        
     }
 
     const Item = ({item}) => (
         <View>
             <Pressable style={styles.card}>
-                <Pressable style={{ position: "absolute", top: 15, right: 15 }} onPress={() => removeSelectedLocation({item})}>
-                    <Ionicons name="md-trash-outline" size={30} color="#566573"/>
+                <Pressable style={{ position: "absolute", top: 18, right: 18 }} onPress={() => removeSelectedLocation({item})}>
+                    <Ionicons name="md-trash-outline" size={28} color="#566573"/>
                 </Pressable>
                 <View style={styles.distanceView}>
                     <Text style={styles.distanceText}>{item.Distance/1000}km away</Text>

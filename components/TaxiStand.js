@@ -17,9 +17,9 @@ export default function TaxiStand({ userLocation, selectedLocations, setSelected
                     key={index}
                     coordinate={{ latitude: item.Latitude, longitude: item.Longitude }}
                     onPress={() => {
-                        item.Distance = getDistance(userLocation,{latitude: item.Latitude,longitude: item.Longitude});
+                        item.Distance = getDistance(userLocation, { latitude: item.Latitude, longitude: item.Longitude });
                         setCurrentSelection(item);
-                        funcSelectTaxiStand({ item, selectedLocations, setSelectedLocations, navigation })
+                        funcSelectTaxiStand({ item, selectedLocations, setSelectedLocations, navigation });
                     }}
                     image={{uri: taxiStandMarkerURI}}
                 >

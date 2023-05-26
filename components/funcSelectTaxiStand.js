@@ -2,8 +2,6 @@ import { Alert } from "react-native";
 
 export default function funcSelectTaxiStand({ item, selectedLocations, setSelectedLocations, navigation }) {
 
-    
-
     function removeSelectedLocation() {
         let newLocations = new Set();
         selectedLocations.forEach(element => {
@@ -19,14 +17,14 @@ export default function funcSelectTaxiStand({ item, selectedLocations, setSelect
         "Taxi Stand: " + item.TaxiCode,
         "Address: " + item.Name,
         [
-            { text: "Add", onPress: () => {
-                setSelectedLocations(selectedLocations => new Set(selectedLocations).add(item));
-                navigation.navigate("Selected")
-            }},
-            { text: "Remove", onPress: () => {
+            { text: "Cancel", onPress: () => {}, style: "cancel" },
+            { text: "Remove from Selected", onPress: () => {
                 removeSelectedLocation({item});
             }},
-            { text: "Cancel", onPress: () => {}, style: "cancel" }
+            { text: "Add to Selected", onPress: () => {
+                setSelectedLocations(selectedLocations => new Set(selectedLocations).add(item));
+                navigation.navigate("Selected");
+            }},
         ],
         { cancelable: true }
     )
