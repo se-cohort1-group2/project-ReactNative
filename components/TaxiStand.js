@@ -1,5 +1,6 @@
 import { Text, View, Image } from "react-native";
 import { Marker, Callout } from "react-native-maps";
+import { getDistance } from "geolib";
 
 const taxiStandData = require("./TaxiStands.json");
 
@@ -16,7 +17,9 @@ export default function TaxiStand({ userLocation, selectedLocations, setSelected
                     key={index}
                     coordinate={{ latitude: item.Latitude, longitude: item.Longitude }}
                     onPress={() => {
-                        funcSelectTaxiStand({ item, userLocation, selectedLocations, setSelectedLocations, setCurrentSelection, navigation })
+                        item.Distance = getDistance(userLocation,{latitude: item.Latitude,longitude: item.Longitude});
+                        setCurrentSelection(item);
+                        funcSelectTaxiStand({ item, selectedLocations, setSelectedLocations, navigation })
                     }}
                     image={{uri: taxiStandMarkerURI}}
                 >

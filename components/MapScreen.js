@@ -235,12 +235,6 @@ export default function MapScreen({ JumpToLatitude, JumpToLongitude, setJumpToLa
                         fillColor="#717D7E"
                         strokeWidth={6}
                     />}
-                    {/* {showPolyLine && <Polyline
-                        coordinates={[ userLocation, selectedLocations ]}
-                        strokeColor="#717D7E"
-                        fillColor="#717D7E"
-                        strokeWidth={6}
-                    />} */}
                 </MapView>
             </View>
             <View style={styles.bottomContainer}>

@@ -19,6 +19,7 @@ export default function SelectionListScreen({ selectedLocations, setSelectedLoca
             newLocations.add(element);
         })
         setSelectedLocations(newLocations);
+        
     }
 
     const Item = ({item}) => (
